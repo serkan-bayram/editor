@@ -2,6 +2,15 @@
 
 import Image from "next/image";
 import { Dispatch, memo, SetStateAction, useState } from "react";
+import { Button } from "./ui/button";
+import { Text } from "./text";
+import { useAppSelector } from "@/lib/hooks";
+
+export type Text = {
+  text: string;
+  x: number;
+  y: number;
+};
 
 export function EditVideo({
   frameCount,
@@ -10,11 +19,35 @@ export function EditVideo({
   frameCount: number;
   videoId: string;
 }) {
+  const count = useAppSelector((state) => state.frame.value);
+
   const [selectedFrame, setSelectedFrame] = useState<number>(1);
+
+  const [texts, setTexts] = useState<Text[]>([]);
+
+  function addText() {
+    const lastText = texts[texts.length - 1] ?? { x: 0, y: 0 };
+
+    setTexts((prevValues) => [
+      ...prevValues,
+      { text: "Hello world", x: lastText.x + 15, y: lastText.y + 15 },
+    ]);
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-center border">
+      <div className="w-full h-10 bg-primary rounded-md flex items-center p-2">
+        <Button onClick={addText} className="text-secondary" size={"sm"}>
+          Add Text
+        </Button>
+      </div>
+
+      <div className="relative flex justify-center border">
+        <div className="w-[600px] absolute">
+          {texts.map((text, index) => (
+            <Text key={index} text={text} />
+          ))}
+        </div>
         <Image
           alt={`Frame ${selectedFrame}`}
           src={`/api/frames/${videoId}/${selectedFrame}`}
