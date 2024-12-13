@@ -19,10 +19,17 @@ export const frameSlice = createSlice({
     addText: (state, action: PayloadAction<Text>) => {
       state.texts.push(action.payload);
     },
+    updateText: (state, action: PayloadAction<Text>) => {
+      const texts = state.texts.filter((text) => text.id !== action.payload.id);
+
+      texts.push(action.payload);
+
+      state.texts = texts;
+    },
   },
 });
 
-export const { addText } = frameSlice.actions;
+export const { addText, updateText } = frameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.frame.texts;

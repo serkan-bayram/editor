@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useRef } from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { Text } from "./text";
-import { useAppDispatch, useAppSelector, useAppStore } from "@/lib/hooks";
-import { addText, frameSlice } from "@/lib/features/frame/frameSlice";
+import { Text, Texts } from "./text";
+import { useAppDispatch } from "@/lib/hooks";
+import { addText } from "@/lib/features/frame/frameSlice";
 
 export type Text = {
+  id: string;
   text: string;
   x: number;
   y: number;
@@ -21,29 +22,19 @@ export function Frame({
 }) {
   const dispatch = useAppDispatch();
 
-  const texts = useAppSelector((state) =>
-    state.frame.texts.filter((text) => text.frames.includes(selectedFrame))
-  );
-
   function handleAddText() {
-    const lastText =
-      texts[texts.length - 1] ??
-      ({
-        text: "",
-        x: 0,
-        y: 0,
-        frames: [],
-      } as Text);
-
     dispatch(
       addText({
+        id: window.crypto.randomUUID(),
         text: "Hello world",
-        x: lastText.x + 10,
-        y: lastText.y + 10,
+        x: 20,
+        y: 20,
         frames: [selectedFrame],
       })
     );
   }
+
+  const frameRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
@@ -53,18 +44,19 @@ export function Frame({
         </Button>
       </div>
 
-      <div className="relative flex justify-center border">
-        <div className="w-[600px] absolute">
-          {texts.map((text, index) => (
-            <Text key={index} text={text} />
-          ))}
+      <div
+        ref={frameRef}
+        className="relative overflow-hidden w-[800px] h-[400px] mx-auto flex justify-center border"
+      >
+        <div className="w-full h-full absolute">
+          <Texts frameRef={frameRef} selectedFrame={selectedFrame} />
         </div>
         <Image
           alt={`Frame ${selectedFrame}`}
           src={`/api/frames/${videoId}/${selectedFrame}`}
-          height={600}
+          height={400}
           priority
-          width={600}
+          width={800}
           className="flex-shrink-0 bg-black rounded-md"
         />
       </div>
