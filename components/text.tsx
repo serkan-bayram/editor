@@ -1,4 +1,4 @@
-import type { Text } from "./edit-video";
+import type { Text } from "./frame";
 
 export function Text({ text }: { text: Text }) {
   return (

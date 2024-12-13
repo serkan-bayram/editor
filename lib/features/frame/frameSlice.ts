@@ -1,36 +1,30 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/lib/store";
+import type { Text } from "@/components/frame";
 
 // Define a type for the slice state
 export interface FrameState {
-  value: number;
+  texts: Text[];
 }
 
 // Define the initial state using that type
 const initialState: FrameState = {
-  value: 0,
+  texts: [],
 };
 
 export const frameSlice = createSlice({
   name: "frame",
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
-    },
-    decrement: (state) => {
-      state.value -= 1;
-    },
-    // Use the PayloadAction type to declare the contents of `action.payload`
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+    addText: (state, action: PayloadAction<Text>) => {
+      state.texts.push(action.payload);
     },
   },
 });
 
-export const { increment, decrement, incrementByAmount } = frameSlice.actions;
+export const { addText } = frameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectCount = (state: RootState) => state.frame.value;
+export const selectCount = (state: RootState) => state.frame.texts;
 
 export default frameSlice.reducer;
