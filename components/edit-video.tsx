@@ -3,6 +3,11 @@
 import Image from "next/image";
 import { Dispatch, memo, SetStateAction, useState } from "react";
 import { Frame } from "./frame";
+import { Button } from "./ui/button";
+import { useAppDispatch } from "@/lib/hooks";
+import { addText } from "@/lib/features/frame/frameSlice";
+import { makeVideo } from "@/app/actions";
+import { EditorBar } from "./editor-bar";
 
 export function EditVideo({
   frameCount,
@@ -15,6 +20,8 @@ export function EditVideo({
 
   return (
     <div className="flex flex-col gap-6">
+      <EditorBar videoId={videoId} selectedFrame={selectedFrame} />
+
       <Frame selectedFrame={selectedFrame} videoId={videoId} />
 
       <Timeline
