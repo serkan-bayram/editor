@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { UploadVideo } from "@/components/upload-video";
 
 export default function Home() {

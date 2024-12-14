@@ -11,11 +11,13 @@ export function Texts({
   selectedFrame: number;
   frameRef: RefObject<HTMLDivElement | null>;
 }) {
-  const texts = useAppSelector((state) =>
-    state.frame.texts.filter((text) => text.frames.includes(selectedFrame))
+  const texts = useAppSelector((state) => state.frame.texts);
+
+  const frameTexts = texts.filter((text) =>
+    text.frames.includes(selectedFrame)
   );
 
-  return texts.map((text) => (
+  return frameTexts.map((text) => (
     <Text key={text.id} text={text} frameRef={frameRef} />
   ));
 }

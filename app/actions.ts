@@ -6,6 +6,8 @@ import { existsSync, mkdirSync } from "fs";
 import { join } from "path";
 import { redirect } from "next/navigation";
 import { divideFrames } from "@/lib/divide-frames";
+import ffmpeg from "fluent-ffmpeg";
+import { UPLOADS_PATH } from "./paths";
 
 export async function uploadVideo(formData: FormData) {
   const videoId = randomUUID();
@@ -17,25 +19,50 @@ export async function uploadVideo(formData: FormData) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const uploadsPath = join(process.cwd(), `/uploads/`);
+  const videoDir = join(UPLOADS_PATH, videoId);
 
-  if (!existsSync(uploadsPath)) {
-    mkdirSync(uploadsPath);
+  if (!existsSync(videoDir)) {
+    mkdirSync(videoDir, { recursive: true });
   }
 
-  const path = join(uploadsPath, videoId);
-  await writeFile(path, buffer);
+  // TODO: Save original extension instead of .mp4
+  const videoPath = join(videoDir, "original.mp4");
+
+  await writeFile(videoPath, buffer);
 
   await divideFrames(videoId);
 
   return redirect(`/video/${videoId}`);
 }
 
+export async function makeVideo(videoId: string) {
+  const framesPattern = join(UPLOADS_PATH, videoId, "/frames/", "%d.png");
+
+  const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");
+
+  // TODO: Handle errors
+  ffmpeg(framesPattern)
+    .inputFPS(30) // Set the desired frame rate
+    .outputOptions([
+      "-pix_fmt yuv420p", // Ensure compatibility with most players
+      "-c:v libx264", // Use H.264 encoding
+      "-preset fast", // Compression speed
+      "-crf 23", // Quality (lower is better; 23 is default)
+    ])
+    .on("start", () => console.log("Processing started..."))
+    .on("progress", (progress) => {
+      console.log(`Frames processed: ${progress.frames}`);
+    })
+    .on("end", () => console.log("Video created successfully!"))
+    .on("error", (err) => console.error("Error: ", err))
+    .save(outputVideo);
+}
+
 export async function getFrameCount(videoId: string) {
-  const videoPath = join(process.cwd(), `/frames/`, videoId);
+  const framesDir = join(UPLOADS_PATH, videoId, "/frames/");
 
   try {
-    const dir = await readdir(videoPath);
+    const dir = await readdir(framesDir);
 
     return dir.length;
   } catch (error) {

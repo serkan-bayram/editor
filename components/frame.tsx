@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch } from "@/lib/hooks";
 import { addText } from "@/lib/features/frame/frameSlice";
+import { makeVideo } from "@/app/actions";
 
 export type Text = {
   id: string;
@@ -22,16 +23,18 @@ export function Frame({
 }) {
   const dispatch = useAppDispatch();
 
-  function handleAddText() {
-    dispatch(
-      addText({
-        id: window.crypto.randomUUID(),
-        text: "Hello world",
-        x: 20,
-        y: 20,
-        frames: [selectedFrame],
-      })
-    );
+  async function handleAddText() {
+    await makeVideo(videoId);
+
+    // dispatch(
+    //   addText({
+    //     id: window.crypto.randomUUID(),
+    //     text: "Hello world",
+    //     x: 20,
+    //     y: 20,
+    //     frames: [selectedFrame],
+    //   })
+    // );
   }
 
   const frameRef = useRef<HTMLDivElement>(null);
