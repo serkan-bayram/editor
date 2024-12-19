@@ -33,13 +33,35 @@ export const frameSlice = createSlice({
 
       state.texts = texts;
     },
+    updateTextFrames: (
+      state,
+      action: PayloadAction<{
+        id: String;
+        first: string;
+        last: string;
+      }>
+    ) => {
+      const { first, last, id } = action.payload;
+
+      const text = state.texts.find((text) => text.id === id);
+
+      if (!text) return;
+
+      if (!first.length || !last.length) return;
+
+      text.frames = Array.from(
+        { length: parseInt(last) + 1 - parseInt(first) },
+        (_, i) => parseInt(first) + i
+      );
+    },
     setFocus(state, action: PayloadAction<FocusedComponent | undefined>) {
       state.focusedComponent = action.payload;
     },
   },
 });
 
-export const { addText, updateText, setFocus } = frameSlice.actions;
+export const { addText, updateText, updateTextFrames, setFocus } =
+  frameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.frame.texts;

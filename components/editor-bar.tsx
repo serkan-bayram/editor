@@ -6,8 +6,10 @@ import {
   FocusedComponent,
   setFocus,
   updateText,
+  updateTextFrames,
 } from "@/lib/features/frame/frameSlice";
 import { Input } from "./ui/input";
+import { useEffect, useState } from "react";
 
 export function EditorBar({
   videoId,
@@ -56,6 +58,28 @@ function EditText({
 
   const dispatch = useAppDispatch();
 
+  const [frameRange, setFrameRange] = useState({ first: "", last: "" });
+
+  useEffect(() => {
+    if (!focusedText) return;
+
+    const { first, last } = frameRange;
+
+    if (parseInt(first) > parseInt(last)) {
+      // TODO: Notify user to say this is invalid
+      setFrameRange({ first: first, last: first });
+
+      dispatch(
+        updateTextFrames({ id: focusedText.id, first: first, last: first })
+      );
+      return;
+    }
+
+    dispatch(
+      updateTextFrames({ id: focusedText.id, first: first, last: last })
+    );
+  }, [frameRange]);
+
   if (!focusedText) return null;
 
   return (
@@ -90,6 +114,33 @@ function EditText({
           dispatch(updateText({ ...focusedText, text: ev.currentTarget.value }))
         }
       />
+
+      <Input
+        className="text-secondary max-w-48 h-6"
+        placeholder="First Frame"
+        type="number"
+        value={frameRange.first}
+        onChange={(ev) =>
+          setFrameRange({
+            first: ev.currentTarget.value,
+            last: frameRange.last,
+          })
+        }
+      />
+
+      <Input
+        className="text-secondary max-w-48 h-6"
+        placeholder="First Frame"
+        type="number"
+        value={frameRange.last}
+        onChange={(ev) =>
+          setFrameRange({
+            first: frameRange.first,
+            last: ev.currentTarget.value,
+          })
+        }
+      />
+
       {/* Temporary solution */}
       <Button onClick={() => dispatch(setFocus(undefined))}>
         Stop Editing
