@@ -8,6 +8,8 @@ import { redirect } from "next/navigation";
 import { divideFrames } from "@/lib/divide-frames";
 import ffmpeg from "fluent-ffmpeg";
 import { UPLOADS_PATH } from "./paths";
+import { FrameState } from "@/lib/features/frame/frameSlice";
+import { editVideo } from "@/lib/edit-video";
 
 export async function uploadVideo(formData: FormData) {
   const videoId = randomUUID();
@@ -35,8 +37,10 @@ export async function uploadVideo(formData: FormData) {
   return redirect(`/video/${videoId}`);
 }
 
-export async function makeVideo(videoId: string) {
+export async function makeVideo(videoId: string, frameState: FrameState) {
   const framesPattern = join(UPLOADS_PATH, videoId, "/frames/", "%d.png");
+
+  await editVideo(frameState, videoId);
 
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");
 

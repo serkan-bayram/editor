@@ -158,6 +158,8 @@ function Features({
 }) {
   const dispatch = useAppDispatch();
 
+  const frameState = useAppSelector((state) => state.frame);
+
   async function handleAddText() {
     dispatch(
       addText({
@@ -172,7 +174,7 @@ function Features({
   }
 
   async function handleMakeVideo() {
-    await makeVideo(videoId);
+    await makeVideo(videoId, frameState);
   }
 
   return (
