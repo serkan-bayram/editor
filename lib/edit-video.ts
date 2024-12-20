@@ -21,6 +21,12 @@ export async function editVideo(frameState: FrameState, videoId: string) {
 
       const outputFrame = join(outputPath, `${frame}.png`);
 
+      // TODO: Sharp tooks too much time.
+      // Maybe try this
+      //     ffmpeg -i input_%d.png \
+      // -vf "drawtext=text='Hello':fontsize=24:x=100:y=50, drawtext=text='World':fontsize=30:x=200:y=100" \
+      // -framerate 30 -pix_fmt yuv420p output.mp4
+
       // Add texts to frames
       const image = sharp(inputFrame);
 

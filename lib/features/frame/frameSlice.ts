@@ -4,6 +4,7 @@ import type { Text } from "@/components/frame";
 
 // Define a type for the slice state
 export interface FrameState {
+  selectedFrame: number;
   focusedComponent: FocusedComponent | undefined;
   texts: Text[];
 }
@@ -15,6 +16,7 @@ export type FocusedComponent = {
 
 // Define the initial state using that type
 const initialState: FrameState = {
+  selectedFrame: 1,
   focusedComponent: undefined,
   texts: [],
 };
@@ -30,6 +32,11 @@ export const frameSlice = createSlice({
       const texts = state.texts.filter((text) => text.id !== action.payload.id);
 
       texts.push(action.payload);
+
+      state.texts = texts;
+    },
+    deleteText: (state, action: PayloadAction<{ id: string }>) => {
+      const texts = state.texts.filter((text) => text.id !== action.payload.id);
 
       state.texts = texts;
     },
@@ -57,11 +64,20 @@ export const frameSlice = createSlice({
     setFocus(state, action: PayloadAction<FocusedComponent | undefined>) {
       state.focusedComponent = action.payload;
     },
+    setSelectedFrame(state, action: PayloadAction<number>) {
+      state.selectedFrame = action.payload;
+    },
   },
 });
 
-export const { addText, updateText, updateTextFrames, setFocus } =
-  frameSlice.actions;
+export const {
+  addText,
+  updateText,
+  updateTextFrames,
+  deleteText,
+  setFocus,
+  setSelectedFrame,
+} = frameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.frame.texts;

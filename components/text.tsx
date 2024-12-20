@@ -5,13 +5,12 @@ import { setFocus, updateText } from "@/lib/features/frame/frameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 export function Texts({
-  selectedFrame,
   frameRef,
 }: {
-  selectedFrame: number;
   frameRef: RefObject<HTMLDivElement | null>;
 }) {
   const texts = useAppSelector((state) => state.frame.texts);
+  const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
 
   const frameTexts = texts.filter((text) =>
     text.frames.includes(selectedFrame)
