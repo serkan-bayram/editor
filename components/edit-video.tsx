@@ -5,6 +5,7 @@ import { Dispatch, memo, SetStateAction, useState } from "react";
 import { Frame } from "./frame";
 import { EditorBar } from "./editor-bar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "./ui/input";
 
 const FPS_RATE = 30;
 
@@ -43,14 +44,36 @@ export const Timeline = memo(function Timeline({
 }) {
   return (
     <Tabs defaultValue="frames">
-      <TabsList>
-        <TabsTrigger value="frames">frames</TabsTrigger>
-        <TabsTrigger value="seconds">seconds</TabsTrigger>
-      </TabsList>
+      <div className="flex items-center justify-between w-full">
+        <TabsList>
+          <TabsTrigger value="frames">Frames</TabsTrigger>
+          <TabsTrigger value="seconds">Seconds</TabsTrigger>
+        </TabsList>
+
+        <Input
+          onChange={(ev) => {
+            const value = ev.currentTarget.value;
+
+            if (parseInt(value)) {
+              const frame = parseInt(value);
+
+              const frameDOM = document.querySelector(`#frame-${frame}`);
+
+              if (frameDOM) {
+                frameDOM.scrollIntoView(false);
+              }
+            }
+          }}
+          className="w-36"
+          placeholder="Go to Frame"
+          type="number"
+        />
+      </div>
       <TabsContent value="frames">
-        <div className="w-full p-2 border flex gap-x-4 overflow-x-scroll">
+        <div className="w-full p-2 flex gap-x-4 overflow-x-scroll">
           {Array.from({ length: frameCount }).map((_, index) => (
             <button
+              id={`frame-${index + 1}`}
               className="flex-shrink-0 rounded-md hover:opacity-75 transition-opacity"
               key={index}
               onClick={() => setSelectedFrame(index + 1)}
@@ -69,9 +92,10 @@ export const Timeline = memo(function Timeline({
         </div>
       </TabsContent>
       <TabsContent value="seconds">
-        <div className="w-full p-2 border flex gap-x-4 overflow-x-scroll">
+        <div className="w-full p-2 flex gap-x-4 overflow-x-scroll">
           {Array.from({ length: frameCount }).map((_, index) => {
             if (index % FPS_RATE !== 0) return;
+
             return (
               <button
                 className="flex-shrink-0 rounded-md hover:opacity-75 transition-opacity"
