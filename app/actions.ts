@@ -9,7 +9,6 @@ import { divideFrames } from "@/lib/divide-frames";
 import ffmpeg from "fluent-ffmpeg";
 import { UPLOADS_PATH } from "./paths";
 import { FrameState } from "@/lib/features/frame/frameSlice";
-import { editVideo } from "@/lib/edit-video";
 
 export async function uploadVideo(formData: FormData) {
   const videoId = randomUUID();
@@ -38,24 +37,38 @@ export async function uploadVideo(formData: FormData) {
 }
 
 export async function makeVideo(videoId: string, frameState: FrameState) {
-  const framesPattern = join(UPLOADS_PATH, videoId, "/frames/", "%d.png");
+  const texts = frameState.texts;
 
-  await editVideo(frameState, videoId);
+  const framesPattern = join(UPLOADS_PATH, videoId, "/frames/", "%d.png");
 
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");
 
-  // TODO: Handle errors
+  const complexFilters = texts.map((text, index) => {
+    let startLabel = `[v${index}]`;
+    let endLabel = `[v${index + 1}]`;
+
+    if (index === 0) {
+      startLabel = "[0:v]";
+      endLabel = "[v1]";
+    }
+
+    return `${startLabel}drawtext=text='${text.text}':fontsize=${
+      text.fontSize
+    }:x=${text.x}:y=${text.y}:fontcolor=white:enable='between(n,${
+      text.frames[0]
+    },${text.frames[text.frames.length - 1]})'${endLabel}`;
+  });
+
   ffmpeg(framesPattern)
-    .inputFPS(30) // Set the desired frame rate
-    .outputOptions([
-      "-pix_fmt yuv420p", // Ensure compatibility with most players
-      "-c:v libx264", // Use H.264 encoding
-      "-preset fast", // Compression speed
-      "-crf 23", // Quality (lower is better; 23 is default)
-    ])
+    .inputOptions(["-framerate 30"]) // Set input framerate
+    .outputOptions(["-pix_fmt yuv420p"]) // Encode video with H264
+    .complexFilter(complexFilters)
+    .map(`[v${complexFilters.length}]`) // Map the final filtered video stream
     .on("start", () => console.log("Processing started..."))
     .on("progress", (progress) => {
-      console.log(`Frames processed: ${progress.frames}`);
+      if (progress.frames) {
+        console.log(`Frames processed: ${progress.frames}`);
+      }
     })
     .on("end", () => console.log("Video created successfully!"))
     .on("error", (err) => console.error("Error: ", err))
