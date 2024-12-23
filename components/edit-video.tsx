@@ -19,7 +19,7 @@ export function EditVideo({
       <div className="flex gap-x-1 justify-between">
         <SideBar videoId={videoId} />
 
-        <Frame videoId={videoId} />
+        <Frame videoId={videoId} frameCount={frameCount} />
       </div>
 
       <Timeline frameCount={frameCount} videoId={videoId} />

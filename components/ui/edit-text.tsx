@@ -145,6 +145,8 @@ export function EditText({
         </div>
       </div>
 
+      <Separator className="bg-secondary/25" orientation="horizontal" />
+
       <div className="text-secondary text-sm flex items-center justify-between gap-y-1">
         Text Color
         <Popover>

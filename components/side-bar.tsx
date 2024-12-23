@@ -8,7 +8,7 @@ export function SideBar({ videoId }: { videoId: string }) {
   );
 
   return (
-    <div className="self-stretch mb-12 w-full bg-primary rounded-md p-2 ">
+    <div className="self-stretch mb-9 w-full bg-primary rounded-md p-2 ">
       {focusedComponent ? <EditComponent /> : <Features videoId={videoId} />}
     </div>
   );

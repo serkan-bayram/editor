@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { setSelectedFrame } from "@/lib/features/frame/frameSlice";
+import { PauseIcon, PlayIcon } from "lucide-react";
 
 export type Text = {
   id: string;
@@ -15,14 +17,43 @@ export type Text = {
   frames: number[];
 };
 
-export function Frame({ videoId }: { videoId: string }) {
+export function Frame({
+  videoId,
+  frameCount,
+}: {
+  videoId: string;
+  frameCount: number;
+}) {
+  const [video, setVideo] = useState<"paused" | "playing">("paused");
+
   const frameRef = useRef<HTMLDivElement>(null);
 
   const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
 
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let i = selectedFrame === frameCount ? 1 : selectedFrame;
+
+    if (video === "paused") return;
+
+    const interval = setInterval(() => {
+      if (i >= frameCount) {
+        setVideo("paused");
+        clearInterval(interval);
+      }
+
+      dispatch(setSelectedFrame(i++));
+    }, 30);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [video]);
+
   return (
     <>
-      <div className="flex relative flex-shrink-0 w-[800px] flex-col items-center gap-y-3">
+      <div className="flex relative flex-shrink-0 w-[800px] flex-col items-center">
         <div ref={frameRef} className="relative overflow-hidden w-full">
           <div className="w-full h-full absolute">
             <Texts frameRef={frameRef} />
@@ -36,7 +67,22 @@ export function Frame({ videoId }: { videoId: string }) {
             className="bg-black rounded-md"
           />
         </div>
-        <div className="h-9">Frame {selectedFrame}</div>
+        <div className="h-9 grid-cols-3 grid grid-flow-col items-center w-full">
+          <div>Frame {selectedFrame}</div>
+
+          <div className="flex items-center justify-self-center">
+            <button onClick={() => setVideo("playing")}>
+              <PlayIcon className="w-5 h-5" />
+            </button>
+            <button onClick={() => setVideo("paused")}>
+              <PauseIcon className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="justify-self-end">
+            {(selectedFrame / 30).toFixed(1)}s
+          </div>
+        </div>
       </div>
     </>
   );

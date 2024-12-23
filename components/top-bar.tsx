@@ -6,6 +6,7 @@ import {
   setFocus,
   updateText,
 } from "@/lib/features/frame/frameSlice";
+import { Separator } from "./ui/separator";
 
 export function TopBar() {
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ export function TopBar() {
   if (!focusedText) return <div className="h-10 mb-1"></div>;
 
   return (
-    <div className="bg-primary mb-1 rounded-md flex h-10 items-center justify-end gap-x-4 px-2">
+    <div className="bg-primary mb-1  rounded-md flex h-10 items-center justify-end gap-x-4 px-2">
       <div className="capitalize mr-auto text-secondary">
         {focusedComponent?.component}
       </div>
@@ -33,6 +34,8 @@ export function TopBar() {
       >
         Deselect Item
       </Button>
+
+      <Separator className="bg-secondary/25 h-2/3" orientation="vertical" />
 
       <Button
         className="text-secondary"
@@ -52,6 +55,8 @@ export function TopBar() {
       >
         <XIcon /> Remove From This Frame
       </Button>
+
+      <Separator className="bg-secondary/25 h-2/3" orientation="vertical" />
 
       <Button
         className="bg-red-700 hover:bg-red-900 "
