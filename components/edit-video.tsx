@@ -13,9 +13,11 @@ export function EditVideo({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <EditorBar videoId={videoId} />
+      <div className="flex gap-x-4 justify-between">
+        <EditorBar videoId={videoId} />
 
-      <Frame videoId={videoId} />
+        <Frame videoId={videoId} />
+      </div>
 
       <Timeline frameCount={frameCount} videoId={videoId} />
     </div>

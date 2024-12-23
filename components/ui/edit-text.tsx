@@ -8,15 +8,10 @@ import {
 } from "@/lib/features/frame/frameSlice";
 import { useEffect, useState } from "react";
 import { MinusIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Button } from "./button";
-import { Separator } from "./separator";
+
 import { Input } from "./input";
+import { Separator } from "./separator";
 
 export function EditText({
   focusedComponent,
@@ -62,162 +57,117 @@ export function EditText({
   if (!focusedText) return null;
 
   return (
-    <>
-      <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Button
-                className="text-secondary"
-                onClick={() =>
-                  dispatch(
-                    updateText({
-                      ...focusedText,
-                      fontSize: focusedText.fontSize - 1,
-                    })
-                  )
-                }
-                size={"icon"}
-              >
-                <MinusIcon />
-              </Button>
-              <Button
-                className="text-secondary "
-                onClick={() =>
-                  dispatch(
-                    updateText({
-                      ...focusedText,
-                      fontSize: focusedText.fontSize + 1,
-                    })
-                  )
-                }
-                size={"icon"}
-              >
-                <PlusIcon />
-              </Button>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent sideOffset={10}>
-            <p>Font Size</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-
-      <Separator className="bg-secondary mx-2" orientation="vertical" />
-
-      <Input
-        className="text-secondary max-w-48 "
-        placeholder="Text"
-        defaultValue={focusedText.text}
-        onChange={(ev) =>
-          dispatch(updateText({ ...focusedText, text: ev.currentTarget.value }))
-        }
-      />
-
-      <Separator className="bg-secondary mx-2" orientation="vertical" />
-
-      <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="flex items-center gap-x-2">
-              <Input
-                className="text-secondary w-32"
-                placeholder="First Frame"
-                type="number"
-                value={frameRange.first}
-                onChange={(ev) =>
-                  setFrameRange({
-                    first: ev.currentTarget.value,
-                    last: frameRange.last,
-                  })
-                }
-              />
-
-              <div className="text-secondary text-xl">-</div>
-
-              <Input
-                className="text-secondary w-32"
-                placeholder="Last Frame"
-                type="number"
-                value={frameRange.last}
-                onChange={(ev) =>
-                  setFrameRange({
-                    first: frameRange.first,
-                    last: ev.currentTarget.value,
-                  })
-                }
-              />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent sideOffset={10}>
-            <p>Frame Range</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-
-      <Separator className="bg-secondary mx-2" orientation="vertical" />
-
-      <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              className="text-secondary"
-              onClick={() => {
-                dispatch(
-                  updateText({
-                    ...focusedText,
-                    frames: focusedText.frames.filter(
-                      (frame) => frame !== selectedFrame
-                    ),
-                  })
-                );
-
-                dispatch(setFocus(undefined));
-              }}
-              size={"icon"}
-            >
-              <XIcon />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent sideOffset={10}>
-            <p>Remove From This Frame</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-
-      <div className="flex items-center ml-auto h-full ">
-        <TooltipProvider delayDuration={100}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                className="text-secondary"
-                onClick={() => {
-                  dispatch(
-                    deleteText({
-                      id: focusedText.id,
-                    })
-                  );
-
-                  dispatch(setFocus(undefined));
-                }}
-                size={"icon"}
-              >
-                <TrashIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent sideOffset={10}>
-              <p>Remove From Every Frame</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        <Separator className="bg-secondary mx-2" orientation="vertical" />
-
-        {/* Temporary solution */}
-        <Button onClick={() => dispatch(setFocus(undefined))}>
-          Deselect Item
-        </Button>
+    <div className="flex flex-col gap-y-3">
+      <div className="text-secondary flex flex-col gap-1">
+        Font Size
+        <div className="flex justify-between items-center">
+          <Button
+            className="hover:bg-secondary/20 text-secondary"
+            onClick={() =>
+              dispatch(
+                updateText({
+                  ...focusedText,
+                  fontSize: focusedText.fontSize - 1,
+                })
+              )
+            }
+            size={"icon"}
+          >
+            <MinusIcon />
+          </Button>
+          {focusedText.fontSize} px
+          <Button
+            className="hover:bg-secondary/20 text-secondary"
+            onClick={() =>
+              dispatch(
+                updateText({
+                  ...focusedText,
+                  fontSize: focusedText.fontSize + 1,
+                })
+              )
+            }
+            size={"icon"}
+          >
+            <PlusIcon />
+          </Button>
+        </div>
       </div>
-    </>
+
+      <Separator className="bg-secondary/25" orientation="horizontal" />
+
+      <div className="text-secondary flex flex-col gap-1">
+        Text
+        <Input
+          className="text-secondary"
+          placeholder="Text"
+          defaultValue={focusedText.text}
+          onChange={(ev) =>
+            dispatch(
+              updateText({ ...focusedText, text: ev.currentTarget.value })
+            )
+          }
+        />
+      </div>
+
+      <Separator className="bg-secondary/25" orientation="horizontal" />
+
+      <div className="flex flex-col gap-1 text-secondary">
+        Frame Range
+        <div className="flex items-center gap-x-2">
+          <Input
+            className="text-secondary "
+            placeholder="First Frame"
+            type="number"
+            value={frameRange.first}
+            onChange={(ev) =>
+              setFrameRange({
+                first: ev.currentTarget.value,
+                last: frameRange.last,
+              })
+            }
+          />
+          <div className="text-secondary text-xl">-</div>
+          <Input
+            className="text-secondary "
+            placeholder="Last Frame"
+            type="number"
+            value={frameRange.last}
+            onChange={(ev) =>
+              setFrameRange({
+                first: frameRange.first,
+                last: ev.currentTarget.value,
+              })
+            }
+          />
+        </div>
+      </div>
+
+      <Separator className="bg-secondary/25" orientation="horizontal" />
+
+      <Button
+        className="hover:bg-secondary/20 text-secondary"
+        onClick={() => {
+          dispatch(
+            updateText({
+              ...focusedText,
+              frames: focusedText.frames.filter(
+                (frame) => frame !== selectedFrame
+              ),
+            })
+          );
+          dispatch(setFocus(undefined));
+        }}
+      >
+        Remove From This Frame
+      </Button>
+
+      {/* Temporary solution */}
+      <Button
+        className="hover:bg-secondary/20 text-secondary"
+        onClick={() => dispatch(setFocus(undefined))}
+      >
+        Deselect Item
+      </Button>
+    </div>
   );
 }

@@ -27,7 +27,7 @@ export function Features({ videoId }: { videoId: string }) {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <Button
         onClick={handleAddText}
         className="hover:bg-secondary/20 text-secondary"
@@ -38,11 +38,11 @@ export function Features({ videoId }: { videoId: string }) {
 
       <Button
         onClick={handleMakeVideo}
-        className="ml-auto hover:bg-secondary/20 text-secondary"
+        className="mt-auto hover:bg-secondary/20 text-secondary"
       >
         <ClapperboardIcon />
         Make Video
       </Button>
-    </>
+    </div>
   );
 }

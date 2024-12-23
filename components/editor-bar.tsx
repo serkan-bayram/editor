@@ -8,7 +8,7 @@ export function EditorBar({ videoId }: { videoId: string }) {
   );
 
   return (
-    <div className="w-full h-12 bg-primary rounded-md flex items-center p-2">
+    <div className="h-full w-full bg-primary rounded-md p-2 ">
       {focusedComponent ? <EditComponent /> : <Features videoId={videoId} />}
     </div>
   );
