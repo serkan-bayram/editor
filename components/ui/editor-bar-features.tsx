@@ -16,6 +16,9 @@ export function Features({ videoId }: { videoId: string }) {
         text: "Hello world",
         x: 20,
         y: 20,
+        textColor: `#ffffff`,
+        backgroundColor: `#000000`,
+        bgTransparent: false,
         fontSize: 20,
         frames: [frameState.selectedFrame],
       })

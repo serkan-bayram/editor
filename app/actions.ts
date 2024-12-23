@@ -43,9 +43,13 @@ export async function makeVideo(videoId: string, frameState: FrameState) {
 
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");
 
+  const TEXT_PADDING = 10;
+
   const complexFilters = texts.map((text, index) => {
     let startLabel = `[v${index}]`;
     let endLabel = `[v${index + 1}]`;
+
+    const boxOpacity = text.bgTransparent ? "0.0" : "1.0";
 
     if (index === 0) {
       startLabel = "[0:v]";
@@ -54,7 +58,9 @@ export async function makeVideo(videoId: string, frameState: FrameState) {
 
     return `${startLabel}drawtext=text='${text.text}':fontsize=${
       text.fontSize
-    }:x=${text.x}:y=${text.y}:fontcolor=white:enable='between(n,${
+    }:x=${text.x}:y=${text.y}:fontcolor=${text.textColor}:box=1:boxcolor=${
+      text.backgroundColor
+    }@${boxOpacity}:boxborderw=${TEXT_PADDING}:enable='between(n,${
       text.frames[0]
     },${text.frames[text.frames.length - 1]})'${endLabel}`;
   });

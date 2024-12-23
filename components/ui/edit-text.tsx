@@ -9,6 +9,12 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Separator } from "./separator";
+import { HexColorPicker } from "react-colorful";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export function EditText({
   focusedComponent,
@@ -137,6 +143,66 @@ export function EditText({
             }
           />
         </div>
+      </div>
+
+      <div className="text-secondary text-sm flex items-center justify-between gap-y-1">
+        Text Color
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant={"secondary"}>
+              <div
+                style={{ backgroundColor: `${focusedText.textColor}` }}
+                className="w-4 h-4 border"
+              ></div>
+              Open Picker
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <HexColorPicker
+              color={focusedText.textColor}
+              onChange={(newColor) =>
+                dispatch(updateText({ ...focusedText, textColor: newColor }))
+              }
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="text-secondary text-sm flex items-center justify-between gap-y-1">
+        Background Color
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant={"secondary"}>
+              <div
+                style={{ backgroundColor: `${focusedText.backgroundColor}` }}
+                className="w-4 h-4 border"
+              ></div>
+              Open Picker
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <HexColorPicker
+              color={focusedText.backgroundColor}
+              onChange={(newColor) =>
+                dispatch(
+                  updateText({
+                    ...focusedText,
+                    backgroundColor: newColor,
+                    bgTransparent: false,
+                  })
+                )
+              }
+            />
+            <button
+              onClick={() =>
+                dispatch(updateText({ ...focusedText, bgTransparent: true }))
+              }
+              className="mt-1"
+            >
+              Make Transparent
+            </button>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );

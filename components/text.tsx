@@ -1,4 +1,4 @@
-import { FocusEvent, RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import type { Text } from "./frame";
 import { cn } from "@/lib/utils";
 import { setFocus, updateText } from "@/lib/features/frame/frameSlice";
@@ -86,15 +86,16 @@ export function Text({
         left: `${position.x}px`,
         top: `${position.y}px`,
         fontSize: `${text.fontSize}px`,
+        color: `${text.textColor}`,
+        backgroundColor: `${
+          text.bgTransparent ? "#FFFFFF00" : text.backgroundColor
+        }`,
       }}
-      className={cn(
-        "text-white px-2 text-nowrap absolute select-none cursor-grab",
-        {
-          "cursor-grabbing": isDragging,
-          "opacity-50": isDragging,
-          "border border-white": isFocused,
-        }
-      )}
+      className={cn("px-2 text-nowrap absolute select-none cursor-grab", {
+        "cursor-grabbing": isDragging,
+        "opacity-50": isDragging,
+        "border border-white": isFocused,
+      })}
       onMouseDown={handleMouseDown}
     >
       {text.text}

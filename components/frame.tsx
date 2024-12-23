@@ -7,6 +7,9 @@ export type Text = {
   id: string;
   text: string;
   fontSize: number;
+  textColor: string;
+  backgroundColor: string;
+  bgTransparent: boolean;
   x: number;
   y: number;
   frames: number[];
