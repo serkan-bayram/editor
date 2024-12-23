@@ -43,6 +43,9 @@ export function Frame({
         clearInterval(interval);
       }
 
+      // TODO: Looks pretty dope but check performance
+      document.querySelector(`#frame-${i}`)?.scrollIntoView();
+
       dispatch(setSelectedFrame(i++));
     }, 30);
 
