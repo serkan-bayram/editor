@@ -1,8 +1,9 @@
 "use client";
 
 import { Frame } from "./frame";
-import { EditorBar } from "./editor-bar";
+import { SideBar } from "./side-bar";
 import { Timeline } from "./timeline";
+import { TopBar } from "./top-bar";
 
 export function EditVideo({
   frameCount,
@@ -12,9 +13,11 @@ export function EditVideo({
   videoId: string;
 }) {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex gap-x-4 justify-between">
-        <EditorBar videoId={videoId} />
+    <div className="flex flex-col">
+      <TopBar />
+
+      <div className="flex gap-x-1 justify-between">
+        <SideBar videoId={videoId} />
 
         <Frame videoId={videoId} />
       </div>

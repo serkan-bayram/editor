@@ -1,15 +1,12 @@
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
-  deleteText,
   FocusedComponent,
-  setFocus,
   updateText,
   updateTextFrames,
 } from "@/lib/features/frame/frameSlice";
 import { useEffect, useState } from "react";
-import { MinusIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
-
 import { Input } from "./input";
 import { Separator } from "./separator";
 
@@ -20,8 +17,6 @@ export function EditText({
 }) {
   const texts = useAppSelector((state) => state.frame.texts);
   const focusedText = texts.find((text) => text.id === focusedComponent?.id);
-
-  const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
 
   const dispatch = useAppDispatch();
 
@@ -58,11 +53,15 @@ export function EditText({
 
   return (
     <div className="flex flex-col gap-y-3">
-      <div className="text-secondary flex flex-col gap-1">
-        Font Size
-        <div className="flex justify-between items-center">
+      <div className="text-secondary flex flex-col gap-y-1">
+        <div className="text-sm flex items-center justify-between">
+          <div>Font Size</div>
+          {focusedText.fontSize} px
+        </div>
+        <div className="flex *:flex-1 gap-x-2">
           <Button
-            className="hover:bg-secondary/20 text-secondary"
+            size={"sm"}
+            variant={"secondary"}
             onClick={() =>
               dispatch(
                 updateText({
@@ -71,13 +70,12 @@ export function EditText({
                 })
               )
             }
-            size={"icon"}
           >
-            <MinusIcon />
+            <MinusIcon /> Decrease
           </Button>
-          {focusedText.fontSize} px
           <Button
-            className="hover:bg-secondary/20 text-secondary"
+            size={"sm"}
+            variant={"secondary"}
             onClick={() =>
               dispatch(
                 updateText({
@@ -86,19 +84,18 @@ export function EditText({
                 })
               )
             }
-            size={"icon"}
           >
-            <PlusIcon />
+            <PlusIcon /> Increase
           </Button>
         </div>
       </div>
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 
-      <div className="text-secondary flex flex-col gap-1">
+      <div className="text-secondary text-sm flex flex-col gap-y-1">
         Text
         <Input
-          className="text-secondary"
+          className="bg-secondary text-primary"
           placeholder="Text"
           defaultValue={focusedText.text}
           onChange={(ev) =>
@@ -111,11 +108,11 @@ export function EditText({
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 
-      <div className="flex flex-col gap-1 text-secondary">
+      <div className="text-secondary text-sm flex flex-col gap-y-1">
         Frame Range
         <div className="flex items-center gap-x-2">
           <Input
-            className="text-secondary "
+            className="bg-secondary text-primary"
             placeholder="First Frame"
             type="number"
             value={frameRange.first}
@@ -128,7 +125,7 @@ export function EditText({
           />
           <div className="text-secondary text-xl">-</div>
           <Input
-            className="text-secondary "
+            className="bg-secondary text-primary"
             placeholder="Last Frame"
             type="number"
             value={frameRange.last}
@@ -141,33 +138,6 @@ export function EditText({
           />
         </div>
       </div>
-
-      <Separator className="bg-secondary/25" orientation="horizontal" />
-
-      <Button
-        className="hover:bg-secondary/20 text-secondary"
-        onClick={() => {
-          dispatch(
-            updateText({
-              ...focusedText,
-              frames: focusedText.frames.filter(
-                (frame) => frame !== selectedFrame
-              ),
-            })
-          );
-          dispatch(setFocus(undefined));
-        }}
-      >
-        Remove From This Frame
-      </Button>
-
-      {/* Temporary solution */}
-      <Button
-        className="hover:bg-secondary/20 text-secondary"
-        onClick={() => dispatch(setFocus(undefined))}
-      >
-        Deselect Item
-      </Button>
     </div>
   );
 }

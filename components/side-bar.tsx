@@ -2,13 +2,13 @@ import { useAppSelector } from "@/lib/hooks";
 import { EditText } from "./ui/edit-text";
 import { Features } from "./ui/editor-bar-features";
 
-export function EditorBar({ videoId }: { videoId: string }) {
+export function SideBar({ videoId }: { videoId: string }) {
   const focusedComponent = useAppSelector(
     (state) => state.frame.focusedComponent
   );
 
   return (
-    <div className="h-full w-full bg-primary rounded-md p-2 ">
+    <div className="self-stretch mb-12 w-full bg-primary rounded-md p-2 ">
       {focusedComponent ? <EditComponent /> : <Features videoId={videoId} />}
     </div>
   );
