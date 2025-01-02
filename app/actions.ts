@@ -10,6 +10,27 @@ import ffmpeg from "fluent-ffmpeg";
 import { UPLOADS_PATH } from "./paths";
 import { FrameState } from "@/lib/features/frame/frameSlice";
 
+export async function uploadImage(imageFile: File, videoId: string) {
+  if (!imageFile) throw new Error("No file uploaded");
+
+  const bytes = await imageFile.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  const imagesDir = join(UPLOADS_PATH, videoId, "images");
+
+  if (!existsSync(imagesDir)) {
+    mkdirSync(imagesDir, { recursive: true });
+  }
+
+  const imageId = randomUUID();
+
+  const imagePath = join(imagesDir, `${imageId}`);
+
+  await writeFile(imagePath, buffer);
+
+  return imageId;
+}
+
 export async function uploadVideo(formData: FormData) {
   const videoId = randomUUID();
 

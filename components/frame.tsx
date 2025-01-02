@@ -4,6 +4,7 @@ import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setSelectedFrame } from "@/lib/features/frame/frameSlice";
 import { PauseIcon, PlayIcon } from "lucide-react";
+import { Images } from "./images";
 
 export type Text = {
   id: string;
@@ -17,18 +18,23 @@ export type Text = {
   frames: number[];
 };
 
-export function Frame({
-  videoId,
-  frameCount,
-}: {
-  videoId: string;
-  frameCount: number;
-}) {
+export type Image = {
+  id: string;
+  imageId: string;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  frames: number[];
+};
+
+export function Frame({ frameCount }: { frameCount: number }) {
   const [video, setVideo] = useState<"paused" | "playing">("paused");
 
   const frameRef = useRef<HTMLDivElement>(null);
 
   const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
+  const videoId = useAppSelector((state) => state.frame.videoId);
 
   const dispatch = useAppDispatch();
 
@@ -60,6 +66,7 @@ export function Frame({
         <div ref={frameRef} className="relative overflow-hidden w-full">
           <div className="w-full h-full absolute">
             <Texts frameRef={frameRef} />
+            <Images frameRef={frameRef} />
           </div>
           <Image
             alt={`Frame ${selectedFrame}`}

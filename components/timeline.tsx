@@ -2,19 +2,18 @@ import Image from "next/image";
 import { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "./ui/input";
-import { useAppDispatch } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setSelectedFrame } from "@/lib/features/frame/frameSlice";
 
 const FPS_RATE = 30;
 
 export const Timeline = memo(function Timeline({
   frameCount,
-  videoId,
 }: {
   frameCount: number;
-  videoId: string;
 }) {
   const dispatch = useAppDispatch();
+  const videoId = useAppSelector((state) => state.frame.videoId);
 
   return (
     <Tabs defaultValue="frames">

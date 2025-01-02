@@ -1,30 +1,37 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/lib/store";
-import type { Text } from "@/components/frame";
+import type { Text, Image } from "@/components/frame";
 
 // Define a type for the slice state
 export interface FrameState {
+  videoId: string;
   selectedFrame: number;
   focusedComponent: FocusedComponent | undefined;
   texts: Text[];
+  images: Image[];
 }
 
 export type FocusedComponent = {
-  component: "text";
+  component: "text" | "image";
   id: string;
 };
 
 // Define the initial state using that type
 const initialState: FrameState = {
+  videoId: "",
   selectedFrame: 1,
   focusedComponent: undefined,
   texts: [],
+  images: [],
 };
 
 export const frameSlice = createSlice({
   name: "frame",
   initialState,
   reducers: {
+    setVideoId: (state, action: PayloadAction<string>) => {
+      state.videoId = action.payload;
+    },
     addText: (state, action: PayloadAction<Text>) => {
       state.texts.push(action.payload);
     },
@@ -61,6 +68,39 @@ export const frameSlice = createSlice({
         (_, i) => parseInt(first) + i
       );
     },
+    addImage: (state, action: PayloadAction<Image>) => {
+      state.images.push(action.payload);
+    },
+    updateImage: (state, action: PayloadAction<Image>) => {
+      const images = state.images.filter(
+        (text) => text.id !== action.payload.id
+      );
+
+      images.push(action.payload);
+
+      state.images = images;
+    },
+    updateImageFrames: (
+      state,
+      action: PayloadAction<{
+        id: String;
+        first: string;
+        last: string;
+      }>
+    ) => {
+      const { first, last, id } = action.payload;
+
+      const text = state.texts.find((text) => text.id === id);
+
+      if (!text) return;
+
+      if (!first.length || !last.length) return;
+
+      text.frames = Array.from(
+        { length: parseInt(last) + 1 - parseInt(first) },
+        (_, i) => parseInt(first) + i
+      );
+    },
     setFocus(state, action: PayloadAction<FocusedComponent | undefined>) {
       state.focusedComponent = action.payload;
     },
@@ -71,10 +111,14 @@ export const frameSlice = createSlice({
 });
 
 export const {
+  setVideoId,
   addText,
   updateText,
   updateTextFrames,
   deleteText,
+  addImage,
+  updateImage,
+  updateImageFrames,
   setFocus,
   setSelectedFrame,
 } = frameSlice.actions;
