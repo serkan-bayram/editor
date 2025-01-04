@@ -1,5 +1,8 @@
 import { useAppDispatch, useAppSelector, useFrameRange } from "@/lib/hooks";
-import { FocusedComponent } from "@/lib/features/frame/frameSlice";
+import {
+  FocusedComponent,
+  updateComponent,
+} from "@/lib/features/frame/frameSlice";
 import { useEffect, useState } from "react";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
@@ -23,15 +26,18 @@ export function EditImage({
     (image) => image.id === focusedComponent?.id
   );
 
+  const dispatch = useAppDispatch();
+
   if (!focusedImage) return null;
 
   return (
     <div className="flex flex-col gap-y-3">
-      <FrameRange focusedComponent={focusedImage} />
-      {/* <div className="text-secondary flex flex-col gap-y-1">
+      <div className="text-secondary flex flex-col gap-y-1">
         <div className="text-sm flex items-center justify-between">
-          <div>Font Size</div>
-          {focusedText.fontSize} px
+          <div>Image Size</div>
+          <div>
+            {focusedImage.width} x {focusedImage.height}
+          </div>
         </div>
         <div className="flex *:flex-1 gap-x-2">
           <Button
@@ -39,9 +45,9 @@ export function EditImage({
             variant={"secondary"}
             onClick={() =>
               dispatch(
-                updateText({
-                  ...focusedText,
-                  fontSize: focusedText.fontSize - 1,
+                updateComponent({
+                  ...focusedImage,
+                  width: focusedImage.width - 10,
                 })
               )
             }
@@ -53,9 +59,9 @@ export function EditImage({
             variant={"secondary"}
             onClick={() =>
               dispatch(
-                updateText({
-                  ...focusedText,
-                  fontSize: focusedText.fontSize + 1,
+                updateComponent({
+                  ...focusedImage,
+                  width: focusedImage.width + 10,
                 })
               )
             }
@@ -66,6 +72,9 @@ export function EditImage({
       </div>
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
+
+      <FrameRange focusedComponent={focusedImage} />
+      {/* 
 
       <div className="text-secondary text-sm flex flex-col gap-y-1">
         Text

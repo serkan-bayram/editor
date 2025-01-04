@@ -2,7 +2,7 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import type { Image } from "./frame";
 import { cn } from "@/lib/utils";
 import { setFocus, updateComponent } from "@/lib/features/frame/frameSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector, useDraggable } from "@/lib/hooks";
 import NextImage from "next/image";
 
 export function Images({
@@ -30,56 +30,11 @@ export function Image({
   frameRef: RefObject<HTMLDivElement | null>;
 }) {
   const imageRef = useRef<HTMLButtonElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const dispatch = useAppDispatch();
-  const position = { x: image.x, y: image.y };
-
-  const isFocused = useAppSelector(
-    (state) => state.frame.focusedComponent?.id === image.id
-  );
 
   const videoId = useAppSelector((state) => state.frame.videoId);
 
-  useEffect(() => {
-    if (!frameRef.current) return;
-
-    function handleMouseMove(ev: MouseEvent) {
-      if (!frameRef.current) return;
-
-      if (isDragging) {
-        const rect = frameRef.current.getBoundingClientRect();
-
-        dispatch(
-          updateComponent({
-            ...image,
-            x: ev.clientX - rect.left,
-            y: ev.clientY - rect.top,
-          })
-        );
-      }
-    }
-
-    function handleMouseUp() {
-      setIsDragging(false);
-    }
-
-    frameRef.current.addEventListener("mousemove", handleMouseMove);
-    frameRef.current.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      frameRef.current?.removeEventListener("mousemove", handleMouseMove);
-      frameRef.current?.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDragging, position]);
-
-  function handleMouseDown() {
-    setIsDragging(true);
-  }
-
-  function handleFocus() {
-    dispatch(setFocus({ component: "image", id: image.id }));
-  }
+  const { position, handleFocus, handleMouseDown, isDragging, isFocused } =
+    useDraggable(image, frameRef);
 
   return (
     <button
@@ -88,6 +43,8 @@ export function Image({
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
+        width: `${image.width}px`,
+        height: `${image.height}px`,
       }}
       className={cn("px-2 text-nowrap absolute select-none cursor-grab", {
         "cursor-grabbing": isDragging,
@@ -98,8 +55,8 @@ export function Image({
     >
       <NextImage
         alt="Added Image"
-        width={image.width}
-        height={image.height}
+        fill
+        className="select-none"
         src={`/api/frames/${videoId}/images/${image.imageName}`}
       />
     </button>
