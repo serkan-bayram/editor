@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector, useFrameRange } from "@/lib/hooks";
 import {
   FocusedComponent,
   updateText,
@@ -26,36 +26,7 @@ export function EditImage({
     (image) => image.id === focusedComponent?.id
   );
 
-  const dispatch = useAppDispatch();
-
-  const firstFrame = focusedImage?.frames[0]?.toString() ?? "";
-  const lastFrame =
-    focusedImage?.frames[focusedImage.frames.length - 1]?.toString() ?? "";
-
-  const [frameRange, setFrameRange] = useState({
-    first: firstFrame,
-    last: lastFrame,
-  });
-
-  useEffect(() => {
-    if (!focusedImage) return;
-
-    const { first, last } = frameRange;
-
-    if (parseInt(first) > parseInt(last)) {
-      // TODO: Notify user to say this is invalid
-      setFrameRange({ first: first, last: first });
-
-      dispatch(
-        updateImageFrames({ id: focusedImage.id, first: first, last: first })
-      );
-      return;
-    }
-
-    dispatch(
-      updateImageFrames({ id: focusedImage.id, first: first, last: last })
-    );
-  }, [frameRange]);
+  const { frameRange, setFrameRange } = useFrameRange(focusedImage);
 
   if (!focusedImage) return null;
 

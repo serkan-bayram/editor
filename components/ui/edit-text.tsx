@@ -1,10 +1,5 @@
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  FocusedComponent,
-  updateText,
-  updateTextFrames,
-} from "@/lib/features/frame/frameSlice";
-import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector, useFrameRange } from "@/lib/hooks";
+import { FocusedComponent, updateText } from "@/lib/features/frame/frameSlice";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./input";
@@ -26,34 +21,7 @@ export function EditText({
 
   const dispatch = useAppDispatch();
 
-  const firstFrame = focusedText?.frames[0]?.toString() ?? "";
-  const lastFrame =
-    focusedText?.frames[focusedText.frames.length - 1]?.toString() ?? "";
-
-  const [frameRange, setFrameRange] = useState({
-    first: firstFrame,
-    last: lastFrame,
-  });
-
-  useEffect(() => {
-    if (!focusedText) return;
-
-    const { first, last } = frameRange;
-
-    if (parseInt(first) > parseInt(last)) {
-      // TODO: Notify user to say this is invalid
-      setFrameRange({ first: first, last: first });
-
-      dispatch(
-        updateTextFrames({ id: focusedText.id, first: first, last: first })
-      );
-      return;
-    }
-
-    dispatch(
-      updateTextFrames({ id: focusedText.id, first: first, last: last })
-    );
-  }, [frameRange]);
+  const { frameRange, setFrameRange } = useFrameRange(focusedText);
 
   if (!focusedText) return null;
 
