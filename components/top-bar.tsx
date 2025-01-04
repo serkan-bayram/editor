@@ -1,9 +1,10 @@
-import { TrashIcon, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
+  deleteImage,
   deleteText,
   setFocus,
+  updateImage,
   updateText,
 } from "@/lib/features/frame/frameSlice";
 import { Separator } from "./ui/separator";
@@ -11,13 +12,14 @@ import { Separator } from "./ui/separator";
 export function TopBar() {
   const dispatch = useAppDispatch();
 
-  const { texts, selectedFrame, focusedComponent } = useAppSelector(
+  const { texts, images, selectedFrame, focusedComponent } = useAppSelector(
     (state) => state.frame
   );
 
-  const focusedText = texts.find((text) => text.id === focusedComponent?.id);
+  if (!focusedComponent) return <div className="h-10 mb-1"></div>;
 
-  if (!focusedText) return <div className="h-10 mb-1"></div>;
+  const focusedText = texts.find((text) => text.id === focusedComponent.id);
+  const focusedImage = images.find((image) => image.id === focusedComponent.id);
 
   return (
     <div className="bg-primary mb-1 rounded-md flex h-10 items-center justify-end gap-x-4 px-2">
@@ -45,14 +47,25 @@ export function TopBar() {
         variant={"ghost"}
         size={"sm"}
         onClick={() => {
-          dispatch(
-            updateText({
-              ...focusedText,
-              frames: focusedText.frames.filter(
-                (frame) => frame !== selectedFrame
-              ),
-            })
-          );
+          if (focusedText) {
+            dispatch(
+              updateText({
+                ...focusedText,
+                frames: focusedText.frames.filter(
+                  (frame) => frame !== selectedFrame
+                ),
+              })
+            );
+          } else if (focusedImage) {
+            dispatch(
+              updateImage({
+                ...focusedImage,
+                frames: focusedImage.frames.filter(
+                  (frame) => frame !== selectedFrame
+                ),
+              })
+            );
+          }
           dispatch(setFocus(undefined));
         }}
       >
@@ -65,11 +78,19 @@ export function TopBar() {
         className="bg-red-700 hover:bg-red-900 "
         size={"sm"}
         onClick={() => {
-          dispatch(
-            deleteText({
-              id: focusedText.id,
-            })
-          );
+          if (focusedText) {
+            dispatch(
+              deleteText({
+                id: focusedText.id,
+              })
+            );
+          } else if (focusedImage) {
+            dispatch(
+              deleteImage({
+                id: focusedImage.id,
+              })
+            );
+          }
           dispatch(setFocus(undefined));
         }}
       >

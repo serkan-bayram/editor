@@ -80,6 +80,13 @@ export const frameSlice = createSlice({
 
       state.images = images;
     },
+    deleteImage: (state, action: PayloadAction<{ id: string }>) => {
+      const images = state.images.filter(
+        (image) => image.id !== action.payload.id
+      );
+
+      state.images = images;
+    },
     updateImageFrames: (
       state,
       action: PayloadAction<{
@@ -118,6 +125,7 @@ export const {
   deleteText,
   addImage,
   updateImage,
+  deleteImage,
   updateImageFrames,
   setFocus,
   setSelectedFrame,
