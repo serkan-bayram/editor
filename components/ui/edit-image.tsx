@@ -15,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { FrameRange } from "./frame-range";
 
 export function EditImage({
   focusedComponent,
@@ -26,12 +27,14 @@ export function EditImage({
     (image) => image.id === focusedComponent?.id
   );
 
-  const { frameRange, setFrameRange } = useFrameRange(focusedImage);
-
   if (!focusedImage) return null;
 
   return (
     <div className="flex flex-col gap-y-3">
+      <FrameRange
+        focusedComponent={focusedImage}
+        updateFramesFunc={updateImageFrames}
+      />
       {/* <div className="text-secondary flex flex-col gap-y-1">
         <div className="text-sm flex items-center justify-between">
           <div>Font Size</div>
@@ -86,37 +89,6 @@ export function EditImage({
       </div>
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
-
-      <div className="text-secondary text-sm flex flex-col gap-y-1">
-        Frame Range
-        <div className="flex items-center gap-x-2">
-          <Input
-            className="bg-secondary text-primary"
-            placeholder="First Frame"
-            type="number"
-            value={frameRange.first}
-            onChange={(ev) =>
-              setFrameRange({
-                first: ev.currentTarget.value,
-                last: frameRange.last,
-              })
-            }
-          />
-          <div className="text-secondary text-xl">-</div>
-          <Input
-            className="bg-secondary text-primary"
-            placeholder="Last Frame"
-            type="number"
-            value={frameRange.last}
-            onChange={(ev) =>
-              setFrameRange({
-                first: frameRange.first,
-                last: ev.currentTarget.value,
-              })
-            }
-          />
-        </div>
-      </div>
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 

@@ -90,13 +90,13 @@ export const frameSlice = createSlice({
     ) => {
       const { first, last, id } = action.payload;
 
-      const text = state.texts.find((text) => text.id === id);
+      const image = state.images.find((image) => image.id === id);
 
-      if (!text) return;
+      if (!image) return;
 
       if (!first.length || !last.length) return;
 
-      text.frames = Array.from(
+      image.frames = Array.from(
         { length: parseInt(last) + 1 - parseInt(first) },
         (_, i) => parseInt(first) + i
       );

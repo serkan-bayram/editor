@@ -1,11 +1,7 @@
 import { RefObject, useEffect, useRef, useState } from "react";
-import type { Image, Text } from "./frame";
+import type { Image } from "./frame";
 import { cn } from "@/lib/utils";
-import {
-  setFocus,
-  updateImage,
-  updateText,
-} from "@/lib/features/frame/frameSlice";
+import { setFocus, updateImage } from "@/lib/features/frame/frameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import NextImage from "next/image";
 

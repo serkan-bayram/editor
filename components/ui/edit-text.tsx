@@ -1,5 +1,9 @@
 import { useAppDispatch, useAppSelector, useFrameRange } from "@/lib/hooks";
-import { FocusedComponent, updateText } from "@/lib/features/frame/frameSlice";
+import {
+  FocusedComponent,
+  updateText,
+  updateTextFrames,
+} from "@/lib/features/frame/frameSlice";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./input";
@@ -10,6 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { FrameRange } from "./frame-range";
 
 export function EditText({
   focusedComponent,
@@ -20,8 +25,6 @@ export function EditText({
   const focusedText = texts.find((text) => text.id === focusedComponent?.id);
 
   const dispatch = useAppDispatch();
-
-  const { frameRange, setFrameRange } = useFrameRange(focusedText);
 
   if (!focusedText) return null;
 
@@ -82,36 +85,10 @@ export function EditText({
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 
-      <div className="text-secondary text-sm flex flex-col gap-y-1">
-        Frame Range
-        <div className="flex items-center gap-x-2">
-          <Input
-            className="bg-secondary text-primary"
-            placeholder="First Frame"
-            type="number"
-            value={frameRange.first}
-            onChange={(ev) =>
-              setFrameRange({
-                first: ev.currentTarget.value,
-                last: frameRange.last,
-              })
-            }
-          />
-          <div className="text-secondary text-xl">-</div>
-          <Input
-            className="bg-secondary text-primary"
-            placeholder="Last Frame"
-            type="number"
-            value={frameRange.last}
-            onChange={(ev) =>
-              setFrameRange({
-                first: frameRange.first,
-                last: ev.currentTarget.value,
-              })
-            }
-          />
-        </div>
-      </div>
+      <FrameRange
+        focusedComponent={focusedText}
+        updateFramesFunc={updateTextFrames}
+      />
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 
