@@ -4,15 +4,10 @@ import type { Image, Text } from "../frame";
 
 export function FrameRange({
   focusedComponent,
-  updateFramesFunc,
 }: {
   focusedComponent: Image | Text;
-  updateFramesFunc: any;
 }) {
-  const { frameRange, setFrameRange } = useFrameRange(
-    focusedComponent,
-    updateFramesFunc
-  );
+  const { frameRange, setFrameRange } = useFrameRange(focusedComponent);
 
   return (
     <div className="text-secondary text-sm flex flex-col gap-y-1">

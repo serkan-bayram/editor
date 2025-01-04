@@ -22,13 +22,13 @@ export async function uploadImage(imageFile: File, videoId: string) {
     mkdirSync(imagesDir, { recursive: true });
   }
 
-  const imageId = randomUUID();
+  const imageName = randomUUID();
 
-  const imagePath = join(imagesDir, `${imageId}`);
+  const imagePath = join(imagesDir, `${imageName}`);
 
   await writeFile(imagePath, buffer);
 
-  return imageId;
+  return imageName;
 }
 
 export async function uploadVideo(formData: FormData) {

@@ -2,16 +2,14 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import type { AppDispatch, AppStore, RootState } from "./store";
 import { useEffect, useState } from "react";
 import type { Image, Text } from "@/components/frame";
+import { updateComponentFrames } from "./features/frame/frameSlice";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();
 export const useAppStore = useStore.withTypes<AppStore>();
 
-export function useFrameRange(
-  focusedComponent: Image | Text,
-  updateFramesFunc: any
-) {
+export function useFrameRange(focusedComponent: Image | Text) {
   const dispatch = useAppDispatch();
 
   const firstFrame = focusedComponent?.frames[0]?.toString() ?? "";
@@ -35,17 +33,13 @@ export function useFrameRange(
       setFrameRange({ first: first, last: first });
 
       dispatch(
-        updateFramesFunc({
-          id: focusedComponent.id,
-          first: first,
-          last: first,
-        })
+        updateComponentFrames({ ...focusedComponent, first: first, last: last })
       );
       return;
     }
 
     dispatch(
-      updateFramesFunc({ id: focusedComponent.id, first: first, last: last })
+      updateComponentFrames({ ...focusedComponent, first: first, last: last })
     );
   }, [frameRange]);
 

@@ -6,27 +6,28 @@ import { setSelectedFrame } from "@/lib/features/frame/frameSlice";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { Images } from "./images";
 
-export type Text = {
+export interface FrameComponent {
   id: string;
+  x: number;
+  y: number;
+  frames: number[];
+}
+
+export interface Text extends FrameComponent {
+  type: "text";
   text: string;
   fontSize: number;
   textColor: string;
   backgroundColor: string;
   bgTransparent: boolean;
-  x: number;
-  y: number;
-  frames: number[];
-};
+}
 
-export type Image = {
-  id: string;
-  imageId: string;
+export interface Image extends FrameComponent {
+  type: "image";
+  imageName: string;
   width: number;
   height: number;
-  x: number;
-  y: number;
-  frames: number[];
-};
+}
 
 export function Frame({ frameCount }: { frameCount: number }) {
   const [video, setVideo] = useState<"paused" | "playing">("paused");

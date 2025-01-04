@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useRef, useState } from "react";
 import type { Image } from "./frame";
 import { cn } from "@/lib/utils";
-import { setFocus, updateImage } from "@/lib/features/frame/frameSlice";
+import { setFocus, updateComponent } from "@/lib/features/frame/frameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import NextImage from "next/image";
 
@@ -51,7 +51,7 @@ export function Image({
         const rect = frameRef.current.getBoundingClientRect();
 
         dispatch(
-          updateImage({
+          updateComponent({
             ...image,
             x: ev.clientX - rect.left,
             y: ev.clientY - rect.top,
@@ -100,7 +100,7 @@ export function Image({
         alt="Added Image"
         width={image.width}
         height={image.height}
-        src={`/api/frames/${videoId}/images/${image.imageId}`}
+        src={`/api/frames/${videoId}/images/${image.imageName}`}
       />
     </button>
   );

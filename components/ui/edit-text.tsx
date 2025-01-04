@@ -1,8 +1,7 @@
-import { useAppDispatch, useAppSelector, useFrameRange } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   FocusedComponent,
-  updateText,
-  updateTextFrames,
+  updateComponent,
 } from "@/lib/features/frame/frameSlice";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
@@ -41,7 +40,7 @@ export function EditText({
             variant={"secondary"}
             onClick={() =>
               dispatch(
-                updateText({
+                updateComponent({
                   ...focusedText,
                   fontSize: focusedText.fontSize - 1,
                 })
@@ -55,7 +54,7 @@ export function EditText({
             variant={"secondary"}
             onClick={() =>
               dispatch(
-                updateText({
+                updateComponent({
                   ...focusedText,
                   fontSize: focusedText.fontSize + 1,
                 })
@@ -77,7 +76,7 @@ export function EditText({
           defaultValue={focusedText.text}
           onChange={(ev) =>
             dispatch(
-              updateText({ ...focusedText, text: ev.currentTarget.value })
+              updateComponent({ ...focusedText, text: ev.currentTarget.value })
             )
           }
         />
@@ -85,10 +84,7 @@ export function EditText({
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 
-      <FrameRange
-        focusedComponent={focusedText}
-        updateFramesFunc={updateTextFrames}
-      />
+      <FrameRange focusedComponent={focusedText} />
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 
@@ -108,7 +104,9 @@ export function EditText({
             <HexColorPicker
               color={focusedText.textColor}
               onChange={(newColor) =>
-                dispatch(updateText({ ...focusedText, textColor: newColor }))
+                dispatch(
+                  updateComponent({ ...focusedText, textColor: newColor })
+                )
               }
             />
           </PopoverContent>
@@ -132,7 +130,7 @@ export function EditText({
               color={focusedText.backgroundColor}
               onChange={(newColor) =>
                 dispatch(
-                  updateText({
+                  updateComponent({
                     ...focusedText,
                     backgroundColor: newColor,
                     bgTransparent: false,
@@ -142,7 +140,9 @@ export function EditText({
             />
             <button
               onClick={() =>
-                dispatch(updateText({ ...focusedText, bgTransparent: true }))
+                dispatch(
+                  updateComponent({ ...focusedText, bgTransparent: true })
+                )
               }
               className="mt-1"
             >

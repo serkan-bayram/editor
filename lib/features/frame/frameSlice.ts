@@ -29,84 +29,100 @@ export const frameSlice = createSlice({
   name: "frame",
   initialState,
   reducers: {
+    addComponent: (state, action: PayloadAction<Text | Image>) => {
+      switch (action.payload.type) {
+        case "text":
+          state.texts.push(action.payload);
+          break;
+        case "image":
+          state.images.push(action.payload);
+          break;
+        default:
+          break;
+      }
+    },
+    updateComponent: (state, action: PayloadAction<Text | Image>) => {
+      switch (action.payload.type) {
+        case "text":
+          const texts = state.texts.filter(
+            (text) => text.id !== action.payload.id
+          );
+
+          texts.push(action.payload);
+
+          state.texts = texts;
+          break;
+        case "image":
+          const images = state.images.filter(
+            (text) => text.id !== action.payload.id
+          );
+
+          images.push(action.payload);
+
+          state.images = images;
+          break;
+        default:
+          break;
+      }
+    },
+    deleteComponent: (state, action: PayloadAction<Text | Image>) => {
+      switch (action.payload.type) {
+        case "text":
+          const texts = state.texts.filter(
+            (text) => text.id !== action.payload.id
+          );
+
+          state.texts = texts;
+          break;
+        case "image":
+          const images = state.images.filter(
+            (image) => image.id !== action.payload.id
+          );
+
+          state.images = images;
+          break;
+        default:
+          break;
+      }
+    },
+    updateComponentFrames: (
+      state,
+      action: PayloadAction<(Text | Image) & { first: string; last: string }>
+    ) => {
+      const { first, last, id, type } = action.payload;
+
+      switch (type) {
+        case "text":
+          const text = state.texts.find((text) => text.id === id);
+
+          if (!text) return;
+
+          if (!first.length || !last.length) return;
+
+          text.frames = Array.from(
+            { length: parseInt(last) + 1 - parseInt(first) },
+            (_, i) => parseInt(first) + i
+          );
+          break;
+        case "image":
+          const image = state.images.find((image) => image.id === id);
+
+          if (!image) return;
+
+          if (!first.length || !last.length) return;
+
+          image.frames = Array.from(
+            { length: parseInt(last) + 1 - parseInt(first) },
+            (_, i) => parseInt(first) + i
+          );
+          break;
+
+        default:
+          break;
+      }
+    },
     setVideoId: (state, action: PayloadAction<string>) => {
       state.videoId = action.payload;
-    },
-    addText: (state, action: PayloadAction<Text>) => {
-      state.texts.push(action.payload);
-    },
-    updateText: (state, action: PayloadAction<Text>) => {
-      const texts = state.texts.filter((text) => text.id !== action.payload.id);
-
-      texts.push(action.payload);
-
-      state.texts = texts;
-    },
-    deleteText: (state, action: PayloadAction<{ id: string }>) => {
-      const texts = state.texts.filter((text) => text.id !== action.payload.id);
-
-      state.texts = texts;
-    },
-    updateTextFrames: (
-      state,
-      action: PayloadAction<{
-        id: String;
-        first: string;
-        last: string;
-      }>
-    ) => {
-      const { first, last, id } = action.payload;
-
-      const text = state.texts.find((text) => text.id === id);
-
-      if (!text) return;
-
-      if (!first.length || !last.length) return;
-
-      text.frames = Array.from(
-        { length: parseInt(last) + 1 - parseInt(first) },
-        (_, i) => parseInt(first) + i
-      );
-    },
-    addImage: (state, action: PayloadAction<Image>) => {
-      state.images.push(action.payload);
-    },
-    updateImage: (state, action: PayloadAction<Image>) => {
-      const images = state.images.filter(
-        (text) => text.id !== action.payload.id
-      );
-
-      images.push(action.payload);
-
-      state.images = images;
-    },
-    deleteImage: (state, action: PayloadAction<{ id: string }>) => {
-      const images = state.images.filter(
-        (image) => image.id !== action.payload.id
-      );
-
-      state.images = images;
-    },
-    updateImageFrames: (
-      state,
-      action: PayloadAction<{
-        id: String;
-        first: string;
-        last: string;
-      }>
-    ) => {
-      const { first, last, id } = action.payload;
-
-      const image = state.images.find((image) => image.id === id);
-
-      if (!image) return;
-
-      if (!first.length || !last.length) return;
-
-      image.frames = Array.from(
-        { length: parseInt(last) + 1 - parseInt(first) },
-        (_, i) => parseInt(first) + i
-      );
     },
     setFocus(state, action: PayloadAction<FocusedComponent | undefined>) {
       state.focusedComponent = action.payload;
@@ -118,15 +134,11 @@ export const frameSlice = createSlice({
 });
 
 export const {
+  addComponent,
+  updateComponent,
+  deleteComponent,
+  updateComponentFrames,
   setVideoId,
-  addText,
-  updateText,
-  updateTextFrames,
-  deleteText,
-  addImage,
-  updateImage,
-  deleteImage,
-  updateImageFrames,
   setFocus,
   setSelectedFrame,
 } = frameSlice.actions;

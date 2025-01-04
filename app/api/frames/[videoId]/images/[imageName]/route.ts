@@ -4,13 +4,13 @@ import { join } from "path";
 
 export async function GET(
   _: Request,
-  { params }: { params: Promise<{ videoId: string; imageId: string }> }
+  { params }: { params: Promise<{ videoId: string; imageName: string }> }
 ) {
-  const { videoId, imageId } = await params;
+  const { videoId, imageName } = await params;
 
   const imagesDir = join(UPLOADS_PATH, videoId, "/images/");
 
-  const imgPath = join(imagesDir, `${imageId}`);
+  const imgPath = join(imagesDir, `${imageName}`);
 
   const imgBuffer = readFileSync(imgPath);
 

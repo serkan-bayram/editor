@@ -1,9 +1,9 @@
 import { makeVideo, uploadImage } from "@/app/actions";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { addImage, addText } from "@/lib/features/frame/frameSlice";
 import { ClapperboardIcon, ImageIcon, TextCursorInputIcon } from "lucide-react";
 import { Button } from "./button";
 import { ChangeEvent, useRef } from "react";
+import { addComponent } from "@/lib/features/frame/frameSlice";
 
 export function Features() {
   const dispatch = useAppDispatch();
@@ -16,7 +16,8 @@ export function Features() {
 
   async function handleAddText() {
     dispatch(
-      addText({
+      addComponent({
+        type: "text",
         id: window.crypto.randomUUID(),
         text: "Hello world",
         x: 20,
@@ -43,12 +44,13 @@ export function Features() {
       return;
     }
 
-    const imageId = await uploadImage(files[0], videoId);
+    const imageName = await uploadImage(files[0], videoId);
 
     dispatch(
-      addImage({
+      addComponent({
+        type: "image",
         id: window.crypto.randomUUID(),
-        imageId: imageId,
+        imageName: imageName,
         width: 200,
         height: 200,
         x: 20,

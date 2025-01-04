@@ -1,11 +1,9 @@
 import { Button } from "./ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
-  deleteImage,
-  deleteText,
+  deleteComponent,
   setFocus,
-  updateImage,
-  updateText,
+  updateComponent,
 } from "@/lib/features/frame/frameSlice";
 import { Separator } from "./ui/separator";
 
@@ -49,7 +47,7 @@ export function TopBar() {
         onClick={() => {
           if (focusedText) {
             dispatch(
-              updateText({
+              updateComponent({
                 ...focusedText,
                 frames: focusedText.frames.filter(
                   (frame) => frame !== selectedFrame
@@ -58,7 +56,7 @@ export function TopBar() {
             );
           } else if (focusedImage) {
             dispatch(
-              updateImage({
+              updateComponent({
                 ...focusedImage,
                 frames: focusedImage.frames.filter(
                   (frame) => frame !== selectedFrame
@@ -79,17 +77,9 @@ export function TopBar() {
         size={"sm"}
         onClick={() => {
           if (focusedText) {
-            dispatch(
-              deleteText({
-                id: focusedText.id,
-              })
-            );
+            dispatch(deleteComponent(focusedText));
           } else if (focusedImage) {
-            dispatch(
-              deleteImage({
-                id: focusedImage.id,
-              })
-            );
+            dispatch(deleteComponent(focusedImage));
           }
           dispatch(setFocus(undefined));
         }}

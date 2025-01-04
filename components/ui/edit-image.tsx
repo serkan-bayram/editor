@@ -1,9 +1,5 @@
 import { useAppDispatch, useAppSelector, useFrameRange } from "@/lib/hooks";
-import {
-  FocusedComponent,
-  updateText,
-  updateImageFrames,
-} from "@/lib/features/frame/frameSlice";
+import { FocusedComponent } from "@/lib/features/frame/frameSlice";
 import { useEffect, useState } from "react";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
@@ -31,10 +27,7 @@ export function EditImage({
 
   return (
     <div className="flex flex-col gap-y-3">
-      <FrameRange
-        focusedComponent={focusedImage}
-        updateFramesFunc={updateImageFrames}
-      />
+      <FrameRange focusedComponent={focusedImage} />
       {/* <div className="text-secondary flex flex-col gap-y-1">
         <div className="text-sm flex items-center justify-between">
           <div>Font Size</div>

@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useRef, useState } from "react";
 import type { Text } from "./frame";
 import { cn } from "@/lib/utils";
-import { setFocus, updateText } from "@/lib/features/frame/frameSlice";
+import { setFocus, updateComponent } from "@/lib/features/frame/frameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 export function Texts({
@@ -48,7 +48,7 @@ export function Text({
         const rect = frameRef.current.getBoundingClientRect();
 
         dispatch(
-          updateText({
+          updateComponent({
             ...text,
             x: ev.clientX - rect.left,
             y: ev.clientY - rect.top,
