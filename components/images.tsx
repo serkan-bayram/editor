@@ -1,15 +1,9 @@
-import { RefObject, useEffect, useRef, useState } from "react";
 import type { Image } from "./frame";
-import { cn } from "@/lib/utils";
-import { setFocus, updateComponent } from "@/lib/features/frame/frameSlice";
-import { useAppDispatch, useAppSelector, useDraggable } from "@/lib/hooks";
+import { useAppSelector, useDraggable } from "@/lib/hooks";
 import NextImage from "next/image";
+import { Rnd } from "react-rnd";
 
-export function Images({
-  frameRef,
-}: {
-  frameRef: RefObject<HTMLDivElement | null>;
-}) {
+export function Images() {
   const images = useAppSelector((state) => state.frame.images);
   const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
 
@@ -17,48 +11,32 @@ export function Images({
     image.frames.includes(selectedFrame)
   );
 
-  return frameImages.map((image) => (
-    <Image key={image.id} image={image} frameRef={frameRef} />
-  ));
+  return frameImages.map((image) => <Image key={image.id} image={image} />);
 }
 
-export function Image({
-  image,
-  frameRef,
-}: {
-  image: Image;
-  frameRef: RefObject<HTMLDivElement | null>;
-}) {
-  const imageRef = useRef<HTMLButtonElement>(null);
-
+export function Image({ image }: { image: Image }) {
   const videoId = useAppSelector((state) => state.frame.videoId);
 
-  const { position, handleFocus, handleMouseDown, isDragging, isFocused } =
-    useDraggable(image, frameRef);
+  const { setPosition, setFocus, setSize } = useDraggable(image);
 
   return (
-    <button
-      onFocus={handleFocus}
-      ref={imageRef}
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        width: `${image.width}px`,
-        height: `${image.height}px`,
+    <Rnd
+      size={{ width: image.width, height: image.height }}
+      position={{
+        x: image.x,
+        y: image.y,
       }}
-      className={cn("px-2 text-nowrap absolute select-none cursor-grab", {
-        "cursor-grabbing": isDragging,
-        "opacity-50": isDragging,
-        "border border-white": isFocused,
-      })}
-      onMouseDown={handleMouseDown}
+      bounds={"parent"}
+      onDragStop={(_, data) => setPosition(data)}
+      onResizeStop={(_, __, ref) => setSize(ref, image)}
+      onMouseDown={() => setFocus()}
     >
       <NextImage
         alt="Added Image"
         fill
-        className="select-none"
+        className="pointer-events-none"
         src={`/api/frames/${videoId}/images/${image.imageName}`}
       />
-    </button>
+    </Rnd>
   );
 }

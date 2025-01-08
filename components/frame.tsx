@@ -39,6 +39,7 @@ export function Frame({ frameCount }: { frameCount: number }) {
 
   const dispatch = useAppDispatch();
 
+  // TODO: Use sprite sheets to increase performance
   useEffect(() => {
     let i = selectedFrame === frameCount ? 1 : selectedFrame;
 
@@ -66,8 +67,8 @@ export function Frame({ frameCount }: { frameCount: number }) {
       <div className="flex relative flex-shrink-0 w-[800px] flex-col items-center">
         <div ref={frameRef} className="relative overflow-hidden w-full">
           <div className="w-full h-full absolute">
-            <Texts frameRef={frameRef} />
-            <Images frameRef={frameRef} />
+            <Texts />
+            <Images />
           </div>
           <Image
             alt={`Frame ${selectedFrame}`}
