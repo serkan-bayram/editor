@@ -56,41 +56,76 @@ export async function uploadVideo(formData: FormData) {
 
   return redirect(`/video/${videoId}`);
 }
-
 export async function makeVideo(videoId: string, frameState: FrameState) {
-  const texts = frameState.texts;
+  const { texts, images } = frameState;
 
   const framesPattern = join(UPLOADS_PATH, videoId, "/frames/", "%d.png");
-
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");
-
   const TEXT_PADDING = 10;
 
-  const complexFilters = texts.map((text, index) => {
-    let startLabel = `[v${index}]`;
-    let endLabel = `[v${index + 1}]`;
+  // Start with the main video stream
+  let currentLabel = "[0:v]";
+  const filters: string[] = [];
 
-    const boxOpacity = text.bgTransparent ? "0.0" : "1.0";
+  // Add image scaling filters first
+  const scaledImageLabels = images.map((_, index) => `[scaled${index}]`);
 
-    if (index === 0) {
-      startLabel = "[0:v]";
-      endLabel = "[v1]";
-    }
-
-    return `${startLabel}drawtext=text='${text.text}':fontsize=${
-      text.fontSize
-    }:x=${text.x}:y=${text.y}:fontcolor=${text.textColor}:box=1:boxcolor=${
-      text.backgroundColor
-    }@${boxOpacity}:boxborderw=${TEXT_PADDING}:enable='between(n,${
-      text.frames[0]
-    },${text.frames[text.frames.length - 1]})'${endLabel}`;
+  images.forEach((image, index) => {
+    // Each image input starts with [${index + 1}:v] as ffmpeg indexes inputs starting from 0
+    filters.push(
+      `[${index + 1}:v]scale=${image.width}:${image.height}${
+        scaledImageLabels[index]
+      }`
+    );
   });
 
-  ffmpeg(framesPattern)
-    .inputOptions(["-framerate 30"]) // Set input framerate
+  // Then add overlay filters for each image
+  images.forEach((image, index) => {
+    const nextLabel = `[v${index + 1}]`;
+
+    filters.push(
+      `${currentLabel}${scaledImageLabels[index]}overlay=${image.x}:${
+        image.y
+      }:enable='between(n,${image.frames[0]},${
+        image.frames[image.frames.length - 1]
+      })'${nextLabel}`
+    );
+
+    currentLabel = nextLabel;
+  });
+
+  console.log(filters);
+
+  // Finally add text filters
+  texts.forEach((text, index) => {
+    const nextLabel = `[v${images.length + index + 1}]`;
+    const boxOpacity = text.bgTransparent ? "0.0" : "1.0";
+
+    filters.push(
+      `${currentLabel}drawtext=text='${text.text}':fontsize=${
+        text.fontSize
+      }:x=${text.x}:y=${text.y}:fontcolor=${text.textColor}:box=1:boxcolor=${
+        text.backgroundColor
+      }@${boxOpacity}:boxborderw=${TEXT_PADDING}:enable='between(n,${
+        text.frames[0]
+      },${text.frames[text.frames.length - 1]})'${nextLabel}`
+    );
+
+    currentLabel = nextLabel;
+  });
+
+  const ffmpegCommand = ffmpeg(framesPattern).inputOptions(["-framerate 30"]); // Set input framerate
+
+  // Add image inputs after the main video input
+  images.forEach((image) => {
+    const imagePath = join(UPLOADS_PATH, videoId, "/images/", image.imageName);
+    ffmpegCommand.input(imagePath);
+  });
+
+  ffmpegCommand
     .outputOptions(["-pix_fmt yuv420p"]) // Encode video with H264
-    .complexFilter(complexFilters)
-    .map(`[v${complexFilters.length}]`) // Map the final filtered video stream
+    .complexFilter(filters)
+    .map(currentLabel) // Map the final label from the filter chain
     .on("start", () => console.log("Processing started..."))
     .on("progress", (progress) => {
       if (progress.frames) {
