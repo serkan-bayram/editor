@@ -49,24 +49,26 @@ export const Timeline = memo(function Timeline({
       </div>
       <TabsContent value="frames">
         <div className="w-full p-2 flex gap-x-4 overflow-x-scroll">
-          {Array.from({ length: frameCount }).map((_, index) => (
-            <button
-              id={`frame-${index + 1}`}
-              className="flex-shrink-0 rounded-md hover:opacity-75 transition-opacity"
-              key={index}
-              onClick={() => dispatch(setSelectedFrame(index + 1))}
-            >
-              <Image
-                loading="lazy"
-                className="rounded-md"
-                alt={`Frame ${index + 1}`}
-                src={`/api/frames/${videoId}/${index + 1}`}
-                width={192}
-                height={96}
-              />
-              Frame {index + 1}
-            </button>
-          ))}
+          {Array.from({ length: frameCount }).map((_, index) => {
+            return (
+              <button
+                id={`frame-${index + 1}`}
+                className="flex-shrink-0 rounded-md hover:opacity-75 transition-opacity"
+                key={index}
+                onClick={() => dispatch(setSelectedFrame(index + 1))}
+              >
+                <Image
+                  loading="lazy"
+                  className="rounded-md"
+                  alt={`Frame ${index + 1}`}
+                  src={`/api/frames/${videoId}/${index + 1}`}
+                  width={192}
+                  height={96}
+                />
+                Frame {index + 1}
+              </button>
+            );
+          })}
         </div>
       </TabsContent>
       <TabsContent value="seconds">

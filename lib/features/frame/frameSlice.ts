@@ -6,6 +6,7 @@ import type { Text, Image } from "@/components/frame";
 export interface FrameState {
   videoId: string;
   selectedFrame: number;
+  excludedFrames: number[];
   focusedComponent: FocusedComponent | undefined;
   texts: Text[];
   images: Image[];
@@ -20,6 +21,7 @@ export type FocusedComponent = {
 const initialState: FrameState = {
   videoId: "",
   selectedFrame: 1,
+  excludedFrames: [],
   focusedComponent: undefined,
   texts: [],
   images: [],

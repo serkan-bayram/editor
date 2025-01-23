@@ -56,16 +56,28 @@ export async function uploadVideo(formData: FormData) {
 
   return redirect(`/video/${videoId}`);
 }
+
 export async function makeVideo(videoId: string, frameState: FrameState) {
-  const { texts, images } = frameState;
+  const { texts, images, excludedFrames } = frameState;
 
   const framesPattern = join(UPLOADS_PATH, videoId, "/frames/", "%d.png");
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");
   const TEXT_PADDING = 10;
 
-  // Start with the main video stream
+  // Create a select filter expression that excludes specific frames
+  const selectExpr = excludedFrames
+    .map((frame) => `not(eq(n,${frame}))`)
+    .join("*"); // Using * as AND operator
+
+  // Start with select filter to exclude frames
   let currentLabel = "[0:v]";
   const filters: string[] = [];
+
+  // Add select filter as the first operation
+  filters.push(
+    `${currentLabel}select='${selectExpr}',setpts=N/FRAME_RATE/TB[filtered]`
+  );
+  currentLabel = "[filtered]";
 
   // Add image scaling filters first
   const scaledImageLabels = images.map((_, index) => `[scaled${index}]`);
@@ -93,8 +105,6 @@ export async function makeVideo(videoId: string, frameState: FrameState) {
 
     currentLabel = nextLabel;
   });
-
-  console.log(filters);
 
   // Finally add text filters
   texts.forEach((text, index) => {
