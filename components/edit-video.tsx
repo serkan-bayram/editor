@@ -8,13 +8,7 @@ import { TopBar } from "./top-bar";
 import { useAppDispatch } from "@/lib/hooks";
 import { setVideoId } from "@/lib/features/frame/frameSlice";
 
-export function EditVideo({
-  frameCount,
-  videoId,
-}: {
-  frameCount: number;
-  videoId: string;
-}) {
+export function EditVideo({ videoId }: { videoId: string }) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -28,10 +22,10 @@ export function EditVideo({
       <div className="flex gap-x-1 justify-between">
         <SideBar />
 
-        <Frame frameCount={frameCount} />
+        <Frame />
       </div>
 
-      <Timeline frameCount={frameCount} />
+      <Timeline />
     </div>
   );
 }

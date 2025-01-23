@@ -1,4 +1,3 @@
-import { getFrameCount } from "@/app/actions";
 import { EditVideo } from "@/components/edit-video";
 
 export default async function Video({
@@ -8,13 +7,11 @@ export default async function Video({
 }) {
   const videoId = (await params).videoId;
 
-  const frameCount = await getFrameCount(videoId);
-
   return (
     <div className="min-h-screen flex justify-center items-center">
       <div className="w-full flex items-center justify-center">
         <div className="w-[80%]">
-          <EditVideo frameCount={frameCount} videoId={videoId} />
+          <EditVideo videoId={videoId} />
         </div>
       </div>
     </div>

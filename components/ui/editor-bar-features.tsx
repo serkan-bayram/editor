@@ -65,7 +65,7 @@ export function Features() {
   }
 
   return (
-    <div className="flex *:flex-1  flex-wrap gap-x-4 w-full h-full">
+    <div className="flex md:*:flex-1 *:flex-shrink  flex-wrap gap-x-4 w-full h-full">
       <Button variant={"secondary"} onClick={handleAddText}>
         <TextCursorInputIcon />
         Add Text

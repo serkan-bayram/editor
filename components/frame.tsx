@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setSelectedFrame } from "@/lib/features/frame/frameSlice";
-import { PauseIcon, PlayIcon } from "lucide-react";
+import {
+  setCurrentTime,
+  setVideoDuration,
+} from "@/lib/features/frame/frameSlice";
 import { Images } from "./images";
 
 export interface FrameComponent {
@@ -29,71 +31,46 @@ export interface Image extends FrameComponent {
   height: number;
 }
 
-export function Frame({ frameCount }: { frameCount: number }) {
-  const [video, setVideo] = useState<"paused" | "playing">("paused");
-
-  const frameRef = useRef<HTMLDivElement>(null);
-
-  const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
+export function Frame() {
   const videoId = useAppSelector((state) => state.frame.videoId);
+  const currentTime = useAppSelector((state) => state.frame.currentTime);
+  const isHoldingSlider = useAppSelector(
+    (state) => state.frame.isHoldingSlider
+  );
+
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const dispatch = useAppDispatch();
 
-  // TODO: Use sprite sheets to increase performance
   useEffect(() => {
-    let i = selectedFrame === frameCount ? 1 : selectedFrame;
+    if (!videoRef.current) return;
+    if (!isHoldingSlider) return;
 
-    if (video === "paused") return;
-
-    const interval = setInterval(() => {
-      if (i >= frameCount) {
-        setVideo("paused");
-        clearInterval(interval);
-      }
-
-      // TODO: Looks pretty dope but check performance
-      document.querySelector(`#frame-${i}`)?.scrollIntoView();
-
-      dispatch(setSelectedFrame(i++));
-    }, 30);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [video]);
+    videoRef.current.currentTime = currentTime;
+  }, [videoRef.current, currentTime, isHoldingSlider]);
 
   return (
     <>
-      <div className="flex relative flex-shrink-0 w-[800px] flex-col items-center">
-        <div ref={frameRef} className="relative overflow-hidden w-full">
+      <div className="flex relative w-full   flex-col items-center">
+        <div className="relative overflow-hidden w-full">
           <div className="w-full h-full absolute">
             <Texts />
             <Images />
           </div>
-          <Image
-            alt={`Frame ${selectedFrame}`}
-            src={`/api/frames/${videoId}/${selectedFrame}`}
+
+          <video
+            onLoadedMetadata={(e) => {
+              dispatch(setVideoDuration(e.currentTarget.duration));
+            }}
+            onTimeUpdate={(e) => {
+              dispatch(setCurrentTime(e.currentTarget.currentTime));
+            }}
+            ref={videoRef}
             height={400}
-            priority
-            width={800}
-            className="bg-black rounded-md"
-          />
-        </div>
-        <div className="h-9 grid-cols-3 grid grid-flow-col items-center w-full">
-          <div>Frame {selectedFrame}</div>
-
-          <div className="flex items-center justify-self-center">
-            <button onClick={() => setVideo("playing")}>
-              <PlayIcon className="w-5 h-5" />
-            </button>
-            <button onClick={() => setVideo("paused")}>
-              <PauseIcon className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="justify-self-end">
-            {(selectedFrame / 30).toFixed(1)}s
-          </div>
+            controls
+            className="bg-black rounded-md w-full -z-50 "
+            src={`/${videoId}/original.mp4`}
+          ></video>
         </div>
       </div>
     </>

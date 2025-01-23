@@ -7,9 +7,14 @@ export interface FrameState {
   videoId: string;
   selectedFrame: number;
   excludedFrames: number[];
+
   focusedComponent: FocusedComponent | undefined;
   texts: Text[];
   images: Image[];
+  currentTime: number;
+  timelineSliderPos: number;
+  videoDuration: number;
+  isHoldingSlider: boolean;
 }
 
 export type FocusedComponent = {
@@ -21,10 +26,14 @@ export type FocusedComponent = {
 const initialState: FrameState = {
   videoId: "",
   selectedFrame: 1,
+  currentTime: 0,
+  videoDuration: 0,
   excludedFrames: [],
   focusedComponent: undefined,
   texts: [],
   images: [],
+  timelineSliderPos: 0,
+  isHoldingSlider: false,
 };
 
 export const frameSlice = createSlice({
@@ -132,6 +141,18 @@ export const frameSlice = createSlice({
     setSelectedFrame(state, action: PayloadAction<number>) {
       state.selectedFrame = action.payload;
     },
+    setTimelineSliderPos: (state, action: PayloadAction<number>) => {
+      state.timelineSliderPos = action.payload;
+    },
+    setVideoDuration: (state, action: PayloadAction<number>) => {
+      state.videoDuration = action.payload;
+    },
+    setCurrentTime: (state, action: PayloadAction<number>) => {
+      state.currentTime = action.payload;
+    },
+    setIsHoldingSlider: (state, action: PayloadAction<boolean>) => {
+      state.isHoldingSlider = action.payload;
+    },
   },
 });
 
@@ -143,6 +164,10 @@ export const {
   setVideoId,
   setFocus,
   setSelectedFrame,
+  setTimelineSliderPos,
+  setVideoDuration,
+  setCurrentTime,
+  setIsHoldingSlider,
 } = frameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

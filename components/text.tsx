@@ -19,7 +19,7 @@ export function Text({ text }: { text: Text }) {
 
   return (
     <Rnd
-      className={cn("px-2 text-nowrap flex items-center justify-center")}
+      className={cn("px-2 z-50 text-nowrap flex items-center justify-center")}
       style={{
         fontSize: `${text.fontSize}px`,
         color: `${text.textColor}`,
