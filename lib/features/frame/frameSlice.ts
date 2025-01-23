@@ -26,13 +26,13 @@ export type FocusedComponent = {
 const initialState: FrameState = {
   videoId: "",
   selectedFrame: 1,
-  currentTime: 0,
-  videoDuration: 0,
+  currentTime: 1,
+  videoDuration: 1,
   excludedFrames: [],
   focusedComponent: undefined,
   texts: [],
   images: [],
-  timelineSliderPos: 0,
+  timelineSliderPos: 1,
   isHoldingSlider: false,
 };
 
