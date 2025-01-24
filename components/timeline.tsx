@@ -88,13 +88,13 @@ export function Timeline() {
                 }px`,
               }}
             >
-              {index * 5}
+              {index * 5}s
             </div>
           );
         })}
       </div>
 
-      <div className="h-full overflow-y-scroll flex gap-y-2 px-2 flex-col relative">
+      <div className="h-full overflow-y-auto flex gap-y-2 px-2 flex-col relative">
         <div
           ref={thumbnailsContainerRef}
           className="absolute left-2 top-2 flex justify-start"

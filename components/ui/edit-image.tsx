@@ -1,6 +1,5 @@
 import { useAppSelector } from "@/lib/hooks";
 import { FocusedComponent } from "@/lib/features/frame/frameSlice";
-import { FrameRange } from "./frame-range";
 
 export function EditImage({
   focusedComponent,
@@ -14,9 +13,5 @@ export function EditImage({
 
   if (!focusedImage) return null;
 
-  return (
-    <div className="flex flex-col gap-y-3">
-      <FrameRange focusedComponent={focusedImage} />
-    </div>
-  );
+  return <div className="flex flex-col gap-y-3"></div>;
 }

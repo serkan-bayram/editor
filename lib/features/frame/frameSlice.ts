@@ -32,7 +32,7 @@ const initialState: FrameState = {
   focusedComponent: undefined,
   texts: [],
   images: [],
-  timelineSliderPos: 1,
+  timelineSliderPos: 0,
   isHoldingSlider: false,
 };
 
@@ -58,6 +58,8 @@ export const frameSlice = createSlice({
           const texts = state.texts.filter(
             (text) => text.id !== action.payload.id
           );
+
+          // TODO:WE should fix this because their order changes on timeline
 
           texts.push(action.payload);
 
@@ -105,6 +107,44 @@ export const frameSlice = createSlice({
       switch (type) {
         case "text":
           const text = state.texts.find((text) => text.id === id);
+
+          if (!text) return;
+
+          if (!first.length || !last.length) return;
+
+          text.frames = Array.from(
+            { length: parseInt(last) + 1 - parseInt(first) },
+            (_, i) => parseInt(first) + i
+          );
+          break;
+        case "image":
+          const image = state.images.find((image) => image.id === id);
+
+          if (!image) return;
+
+          if (!first.length || !last.length) return;
+
+          image.frames = Array.from(
+            { length: parseInt(last) + 1 - parseInt(first) },
+            (_, i) => parseInt(first) + i
+          );
+          break;
+
+        default:
+          break;
+      }
+    },
+    comebackLeterUpdateSeconds: (
+      state,
+      action: PayloadAction<(Text | Image) & { first: string; last: string }>
+    ) => {
+      const { first, last, id, type } = action.payload;
+
+      switch (type) {
+        case "text":
+          const text = state.texts.find((text) => text.id === id);
+
+          text;
 
           if (!text) return;
 

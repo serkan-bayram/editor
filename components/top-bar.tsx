@@ -41,38 +41,6 @@ export function TopBar() {
       <Separator className="bg-secondary/25 h-2/3" orientation="vertical" />
 
       <Button
-        className="text-secondary"
-        variant={"ghost"}
-        size={"sm"}
-        onClick={() => {
-          if (focusedText) {
-            dispatch(
-              updateComponent({
-                ...focusedText,
-                frames: focusedText.frames.filter(
-                  (frame) => frame !== selectedFrame
-                ),
-              })
-            );
-          } else if (focusedImage) {
-            dispatch(
-              updateComponent({
-                ...focusedImage,
-                frames: focusedImage.frames.filter(
-                  (frame) => frame !== selectedFrame
-                ),
-              })
-            );
-          }
-          dispatch(setFocus(undefined));
-        }}
-      >
-        Remove From This Frame
-      </Button>
-
-      <Separator className="bg-secondary/25 h-2/3" orientation="vertical" />
-
-      <Button
         className="bg-red-700 hover:bg-red-900 "
         size={"sm"}
         onClick={() => {
@@ -84,7 +52,7 @@ export function TopBar() {
           dispatch(setFocus(undefined));
         }}
       >
-        Remove From Every Frame
+        Remove
       </Button>
     </div>
   );

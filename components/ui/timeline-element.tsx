@@ -1,21 +1,51 @@
-import { FocusedComponent, setFocus } from "@/lib/features/frame/frameSlice";
-import { useAppDispatch } from "@/lib/hooks";
+import {
+  setCurrentTime,
+  setFocus,
+  setIsHoldingSlider,
+  setTimelineSliderPos,
+  updateComponent,
+} from "@/lib/features/frame/frameSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
+import { Image, Text } from "../frame";
+
+const DEFAULT_WIDTH = 200;
 
 export function TimelineElement({
   thumbnailsContainerWidth,
   children,
-  focusedComponent,
-  isFocused,
+  component,
 }: {
   thumbnailsContainerWidth: number;
   children: ReactNode;
-  focusedComponent: FocusedComponent;
-  isFocused: boolean;
+  component: Text | Image;
 }) {
   const dispatch = useAppDispatch();
+
+  const focusedComponent = useAppSelector(
+    (state) => state.frame.focusedComponent
+  );
+
+  const videoDuration = useAppSelector((state) => state.frame.videoDuration);
+
+  const isFocused = focusedComponent?.id === component.id;
+
+  const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const [xPos, setXPos] = useState(0);
+
+  useEffect(() => {
+    const start = videoDuration / (thumbnailsContainerWidth / xPos);
+    const end = videoDuration / (thumbnailsContainerWidth / (xPos + width));
+
+    dispatch(
+      updateComponent({
+        ...component,
+        secondsRange: { start: start, end: end },
+      })
+    );
+  }, [width, xPos]);
 
   return (
     <div
@@ -23,18 +53,24 @@ export function TimelineElement({
       style={{ width: `${thumbnailsContainerWidth}px` }}
     >
       <Rnd
-        onMouseDown={() =>
+        onMouseDown={(e) => {
           dispatch(
             setFocus({
-              id: focusedComponent.id,
-              component: focusedComponent.component,
+              id: component.id,
+              component: component.type,
             })
-          )
-        }
+          );
+        }}
+        onResizeStop={(_, __, ref) => {
+          setWidth(ref.clientWidth);
+        }}
+        onDragStop={(_, data) => {
+          setXPos(data.x);
+        }}
         className={cn(`bg-secondary/20`, {
           "outline outline-2 outline-white rounded-sm": isFocused,
         })}
-        default={{ x: 0, y: 0, width: "30%", height: "32px" }}
+        default={{ x: 0, y: 0, width: `${DEFAULT_WIDTH}px`, height: "32px" }}
         minWidth={"40px"}
         enableResizing={{
           top: false,

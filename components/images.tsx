@@ -5,10 +5,12 @@ import { Rnd } from "react-rnd";
 
 export function Images() {
   const images = useAppSelector((state) => state.frame.images);
-  const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
+  const currentTime = useAppSelector((state) => state.frame.currentTime);
 
-  const frameImages = images.filter((image) =>
-    image.frames.includes(selectedFrame)
+  const frameImages = images.filter(
+    (image) =>
+      image.secondsRange.start <= currentTime &&
+      image.secondsRange.end >= currentTime
   );
 
   return frameImages.map((image) => <Image key={image.id} image={image} />);

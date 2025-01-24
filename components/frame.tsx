@@ -13,6 +13,10 @@ export interface FrameComponent {
   x: number;
   y: number;
   frames: number[];
+  secondsRange: {
+    start: number;
+    end: number;
+  };
 }
 
 export interface Text extends FrameComponent {

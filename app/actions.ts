@@ -58,32 +58,18 @@ export async function uploadVideo(formData: FormData) {
 }
 
 export async function makeVideo(videoId: string, frameState: FrameState) {
-  const { texts, images, excludedFrames } = frameState;
+  const { texts, images } = frameState;
 
-  const framesPattern = join(UPLOADS_PATH, videoId, "/frames/", "%d.png");
+  const videoInputPath = join(UPLOADS_PATH, videoId, "original.mp4");
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");
   const TEXT_PADDING = 10;
 
-  // Create a select filter expression that excludes specific frames
-  const selectExpr = excludedFrames
-    .map((frame) => `not(eq(n,${frame}))`)
-    .join("*"); // Using * as AND operator
-
-  // Start with select filter to exclude frames
   let currentLabel = "[0:v]";
   const filters: string[] = [];
 
-  // Add select filter as the first operation
-  filters.push(
-    `${currentLabel}select='${selectExpr}',setpts=N/FRAME_RATE/TB[filtered]`
-  );
-  currentLabel = "[filtered]";
-
   // Add image scaling filters first
   const scaledImageLabels = images.map((_, index) => `[scaled${index}]`);
-
   images.forEach((image, index) => {
-    // Each image input starts with [${index + 1}:v] as ffmpeg indexes inputs starting from 0
     filters.push(
       `[${index + 1}:v]scale=${image.width}:${image.height}${
         scaledImageLabels[index]
@@ -94,15 +80,10 @@ export async function makeVideo(videoId: string, frameState: FrameState) {
   // Then add overlay filters for each image
   images.forEach((image, index) => {
     const nextLabel = `[v${index + 1}]`;
-
+    const { start, end } = image.secondsRange;
     filters.push(
-      `${currentLabel}${scaledImageLabels[index]}overlay=${image.x}:${
-        image.y
-      }:enable='between(n,${image.frames[0]},${
-        image.frames[image.frames.length - 1]
-      })'${nextLabel}`
+      `${currentLabel}${scaledImageLabels[index]}overlay=${image.x}:${image.y}:enable='between(t,${start},${end})'${nextLabel}`
     );
-
     currentLabel = nextLabel;
   });
 
@@ -110,21 +91,14 @@ export async function makeVideo(videoId: string, frameState: FrameState) {
   texts.forEach((text, index) => {
     const nextLabel = `[v${images.length + index + 1}]`;
     const boxOpacity = text.bgTransparent ? "0.0" : "1.0";
-
+    const { start, end } = text.secondsRange;
     filters.push(
-      `${currentLabel}drawtext=text='${text.text}':fontsize=${
-        text.fontSize
-      }:x=${text.x}:y=${text.y}:fontcolor=${text.textColor}:box=1:boxcolor=${
-        text.backgroundColor
-      }@${boxOpacity}:boxborderw=${TEXT_PADDING}:enable='between(n,${
-        text.frames[0]
-      },${text.frames[text.frames.length - 1]})'${nextLabel}`
+      `${currentLabel}drawtext=text='${text.text}':fontsize=${text.fontSize}:x=${text.x}:y=${text.y}:fontcolor=${text.textColor}:box=1:boxcolor=${text.backgroundColor}@${boxOpacity}:boxborderw=${TEXT_PADDING}:enable='between(t,${start},${end})'${nextLabel}`
     );
-
     currentLabel = nextLabel;
   });
 
-  const ffmpegCommand = ffmpeg(framesPattern).inputOptions(["-framerate 30"]); // Set input framerate
+  const ffmpegCommand = ffmpeg(videoInputPath); // Removed framerate input option
 
   // Add image inputs after the main video input
   images.forEach((image) => {

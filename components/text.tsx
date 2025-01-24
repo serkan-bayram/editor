@@ -5,10 +5,12 @@ import { Rnd } from "react-rnd";
 
 export function Texts() {
   const texts = useAppSelector((state) => state.frame.texts);
-  const selectedFrame = useAppSelector((state) => state.frame.selectedFrame);
+  const currentTime = useAppSelector((state) => state.frame.currentTime);
 
-  const frameTexts = texts.filter((text) =>
-    text.frames.includes(selectedFrame)
+  const frameTexts = texts.filter(
+    (text) =>
+      text.secondsRange.start <= currentTime &&
+      text.secondsRange.end >= currentTime
   );
 
   return frameTexts.map((text) => <Text key={text.id} text={text} />);

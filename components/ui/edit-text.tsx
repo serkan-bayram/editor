@@ -13,7 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { FrameRange } from "./frame-range";
 
 export function EditText({
   focusedComponent,
@@ -81,10 +80,6 @@ export function EditText({
           }
         />
       </div>
-
-      <Separator className="bg-secondary/25" orientation="horizontal" />
-
-      <FrameRange focusedComponent={focusedText} />
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 

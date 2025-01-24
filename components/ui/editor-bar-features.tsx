@@ -27,6 +27,10 @@ export function Features() {
         bgTransparent: false,
         fontSize: 20,
         frames: [frameState.selectedFrame],
+        secondsRange: {
+          start: 1,
+          end: 1,
+        },
       })
     );
   }
@@ -56,6 +60,10 @@ export function Features() {
         x: 20,
         y: 20,
         frames: [frameState.selectedFrame],
+        secondsRange: {
+          start: 1,
+          end: 1,
+        },
       })
     );
   }
