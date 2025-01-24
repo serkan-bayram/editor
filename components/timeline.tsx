@@ -6,6 +6,7 @@ import {
   setTimelineSliderPos,
 } from "@/lib/features/frame/frameSlice";
 import { Rnd } from "react-rnd";
+import { TimelineElements } from "./timeline-elements";
 
 const THUMBNAIL_ITEM_WIDTH = 112;
 
@@ -44,7 +45,7 @@ export function Timeline() {
   // }, [thumbnailsContainerRef.current]);
 
   return (
-    <div className="h-48 mt-9 relative flex justify-center flex-col bg-primary rounded-md w-full ">
+    <div className="h-60 mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full ">
       <Rnd
         className="z-20"
         position={{ x: timelineSliderPos, y: 0 }}
@@ -67,67 +68,72 @@ export function Timeline() {
       >
         <div className="flex  flex-col items-center -translate-y-3">
           <div className="w-5 aspect-square rounded-full bg-gray-400"></div>
-          <div className="w-2 h-52 bg-gray-400 -translate-y-2 rounded-lg"></div>
+          <div className="w-2 h-64 bg-gray-400 -translate-y-2 rounded-lg"></div>
         </div>
       </Rnd>
 
       <div
         // ref={timeIndicatorsContainerRef}
         style={{ width: `${thumbnailsContainerWidth}px` }}
-        className="absolute select-none opacity-50 z-10 top-0 left-2 h-4  w-full"
+        className="relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
       >
-        <div className="relative w-full h-full">
-          {Array.from({ length: videoDuration / 5 + 2 }).map((_, index) => {
-            return (
-              <div
-                key={index}
-                className="absolute h-4 w-2 text-white"
-                style={{
-                  left: `${
-                    (thumbnailsContainerWidth / (videoDuration / 5)) * index
-                  }px`,
-                }}
-              >
-                {index * 5}
-              </div>
-            );
-          })}
-        </div>
+        {Array.from({ length: videoDuration / 5 + 2 }).map((_, index) => {
+          return (
+            <div
+              key={index}
+              className="absolute h-4 w-2 text-white"
+              style={{
+                left: `${
+                  (thumbnailsContainerWidth / (videoDuration / 5)) * index
+                }px`,
+              }}
+            >
+              {index * 5}
+            </div>
+          );
+        })}
       </div>
 
-      <div ref={thumbnailsContainerRef} className="flex px-2 justify-start">
+      <div className="h-full overflow-y-scroll flex gap-y-2 px-2 flex-col relative">
         <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
-        <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
-        <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
-        <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
-        <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
-        <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
-        <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
-        <div
-          style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-          className="aspect-video border"
-        ></div>
+          ref={thumbnailsContainerRef}
+          className="absolute left-2 top-2 flex justify-start"
+        >
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+        </div>
+
+        <TimelineElements thumbnailsContainerWidth={thumbnailsContainerWidth} />
       </div>
     </div>
   );

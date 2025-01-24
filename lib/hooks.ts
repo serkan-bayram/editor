@@ -65,7 +65,6 @@ export function useFrameRange(focusedComponent: Image | Text) {
     first: firstFrame,
     last: lastFrame,
   });
-  console.log(frameRange);
 
   useEffect(() => {
     if (!focusedComponent) return;
