@@ -45,7 +45,7 @@ export function Timeline() {
   // }, [thumbnailsContainerRef.current]);
 
   return (
-    <div className="h-60 mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full ">
+    <div className="h-60  mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full ">
       <Rnd
         className="z-20"
         position={{ x: timelineSliderPos, y: 0 }}

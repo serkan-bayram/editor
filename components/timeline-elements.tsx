@@ -1,5 +1,6 @@
 import { useAppSelector } from "@/lib/hooks";
 import { TimelineElement } from "./ui/timeline-element";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export function TimelineElements({
   thumbnailsContainerWidth,

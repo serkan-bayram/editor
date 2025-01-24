@@ -2,7 +2,7 @@ import type { Image } from "./frame";
 import { useAppSelector, useDraggable } from "@/lib/hooks";
 import NextImage from "next/image";
 import { Rnd } from "react-rnd";
-
+import { useHotkeys } from "react-hotkeys-hook";
 export function Images() {
   const images = useAppSelector((state) => state.frame.images);
   const currentTime = useAppSelector((state) => state.frame.currentTime);
@@ -24,7 +24,7 @@ export function Image({ image }: { image: Image }) {
   return (
     <Rnd
       className="z-50"
-      size={{ width: image.width, height: image.height }}
+      size={{ width: image.width / 2, height: image.height / 2 }}
       position={{
         x: image.x,
         y: image.y,

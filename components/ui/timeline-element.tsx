@@ -61,17 +61,17 @@ export function TimelineElement({
             })
           );
         }}
-        onResizeStop={(_, __, ref) => {
+        onResize={(_, __, ref) => {
           setWidth(ref.clientWidth);
         }}
-        onDragStop={(_, data) => {
+        onDrag={(_, data) => {
           setXPos(data.x);
         }}
         className={cn(`bg-secondary/20`, {
           "outline outline-2 outline-white rounded-sm": isFocused,
         })}
         default={{ x: 0, y: 0, width: `${DEFAULT_WIDTH}px`, height: "32px" }}
-        minWidth={"40px"}
+        minWidth={"10px"}
         enableResizing={{
           top: false,
           bottom: false,
