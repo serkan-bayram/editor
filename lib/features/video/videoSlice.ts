@@ -72,6 +72,8 @@ export const videoSlice = createSlice({
       }
     },
     deleteComponent: (state, action: PayloadAction<Text | Image>) => {
+      state.focusedComponent = undefined;
+
       switch (action.payload.type) {
         case "text":
           const texts = state.texts.filter(
