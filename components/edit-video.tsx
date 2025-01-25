@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { Frame } from "./frame";
+import { Video } from "./video";
 import { SideBar } from "./side-bar";
 import { Timeline } from "./timeline";
 import { TopBar } from "./top-bar";
 import { useAppDispatch } from "@/lib/hooks";
-import { setVideoId } from "@/lib/features/frame/frameSlice";
+import { setVideoId } from "@/lib/features/video/videoSlice";
 
 export function EditVideo({ videoId }: { videoId: string }) {
   const dispatch = useAppDispatch();
@@ -22,7 +22,7 @@ export function EditVideo({ videoId }: { videoId: string }) {
       <div className="flex gap-x-1 justify-between">
         <SideBar />
 
-        <Frame />
+        <Video />
       </div>
 
       <Timeline />

@@ -7,21 +7,20 @@ import {
   setCurrentTime,
   setRealVideoDimensions,
   setVideoDuration,
-} from "@/lib/features/frame/frameSlice";
+} from "@/lib/features/video/videoSlice";
 import { Images } from "./images";
 
-export interface FrameComponent {
+export interface VideoComponent {
   id: string;
   x: number;
   y: number;
-  frames: number[];
   secondsRange: {
     start: number;
     end: number;
   };
 }
 
-export interface Text extends FrameComponent {
+export interface Text extends VideoComponent {
   type: "text";
   text: string;
   fontSize: number;
@@ -30,18 +29,18 @@ export interface Text extends FrameComponent {
   bgTransparent: boolean;
 }
 
-export interface Image extends FrameComponent {
+export interface Image extends VideoComponent {
   type: "image";
   imageName: string;
   width: number;
   height: number;
 }
 
-export function Frame() {
-  const videoId = useAppSelector((state) => state.frame.videoId);
-  const currentTime = useAppSelector((state) => state.frame.currentTime);
+export function Video() {
+  const videoId = useAppSelector((state) => state.video.videoId);
+  const currentTime = useAppSelector((state) => state.video.currentTime);
   const isHoldingSlider = useAppSelector(
-    (state) => state.frame.isHoldingSlider
+    (state) => state.video.isHoldingSlider
   );
 
   const videoRef = useRef<HTMLVideoElement>(null);

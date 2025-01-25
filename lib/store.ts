@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import frameReducer from "./features/frame/frameSlice";
+import videoReducer from "./features/video/videoSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      frame: frameReducer,
+      video: videoReducer,
     },
   });
 };

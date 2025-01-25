@@ -1,14 +1,13 @@
 "use server";
 
 import { randomUUID } from "crypto";
-import { readdir, writeFile } from "fs/promises";
+import { writeFile } from "fs/promises";
 import { existsSync, mkdirSync } from "fs";
 import { join } from "path";
 import { redirect } from "next/navigation";
-import { divideFrames } from "@/lib/divide-frames";
 import ffmpeg from "fluent-ffmpeg";
 import { UPLOADS_PATH } from "./paths";
-import { FrameState } from "@/lib/features/frame/frameSlice";
+import { VideoState } from "@/lib/features/video/videoSlice";
 
 export async function uploadImage(imageFile: File, videoId: string) {
   if (!imageFile) throw new Error("No file uploaded");
@@ -52,12 +51,10 @@ export async function uploadVideo(formData: FormData) {
 
   await writeFile(videoPath, buffer);
 
-  await divideFrames(videoId);
-
   return redirect(`/video/${videoId}`);
 }
 
-export async function makeVideo(videoId: string, frameState: FrameState) {
+export async function makeVideo(videoId: string, frameState: VideoState) {
   const {
     texts: originalTexts,
     images: originalImages,
@@ -148,17 +145,4 @@ export async function makeVideo(videoId: string, frameState: FrameState) {
     .on("end", () => console.log("Video created successfully!"))
     .on("error", (err) => console.error("Error: ", err))
     .save(outputVideo);
-}
-
-export async function getFrameCount(videoId: string) {
-  const framesDir = join(UPLOADS_PATH, videoId, "/frames/");
-
-  try {
-    const dir = await readdir(framesDir);
-
-    return dir.length;
-  } catch (error) {
-    console.error("Error: ", error);
-    throw new Error("Cannot get frame count");
-  }
 }

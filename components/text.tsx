@@ -1,19 +1,19 @@
-import type { Text } from "./frame";
+import type { Text } from "./video";
 import { cn } from "@/lib/utils";
 import { useAppSelector, useDraggable } from "@/lib/hooks";
 import { Rnd } from "react-rnd";
 
 export function Texts() {
-  const texts = useAppSelector((state) => state.frame.texts);
-  const currentTime = useAppSelector((state) => state.frame.currentTime);
+  const texts = useAppSelector((state) => state.video.texts);
+  const currentTime = useAppSelector((state) => state.video.currentTime);
 
-  const frameTexts = texts.filter(
+  const currentTexts = texts.filter(
     (text) =>
       text.secondsRange.start <= currentTime &&
       text.secondsRange.end >= currentTime
   );
 
-  return frameTexts.map((text) => <Text key={text.id} text={text} />);
+  return currentTexts.map((text) => <Text key={text.id} text={text} />);
 }
 
 export function Text({ text }: { text: Text }) {

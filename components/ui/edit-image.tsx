@@ -1,12 +1,12 @@
 import { useAppSelector } from "@/lib/hooks";
-import { FocusedComponent } from "@/lib/features/frame/frameSlice";
+import { FocusedComponent } from "@/lib/features/video/videoSlice";
 
 export function EditImage({
   focusedComponent,
 }: {
   focusedComponent: FocusedComponent;
 }) {
-  const images = useAppSelector((state) => state.frame.images);
+  const images = useAppSelector((state) => state.video.images);
   const focusedImage = images.find(
     (image) => image.id === focusedComponent?.id
   );

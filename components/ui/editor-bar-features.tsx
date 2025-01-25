@@ -3,12 +3,12 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { ClapperboardIcon, ImageIcon, TextCursorInputIcon } from "lucide-react";
 import { Button } from "./button";
 import { ChangeEvent, useRef } from "react";
-import { addComponent } from "@/lib/features/frame/frameSlice";
+import { addComponent } from "@/lib/features/video/videoSlice";
 
 export function Features() {
   const dispatch = useAppDispatch();
 
-  const frameState = useAppSelector((state) => state.frame);
+  const frameState = useAppSelector((state) => state.video);
 
   const videoId = frameState.videoId;
 
@@ -26,7 +26,6 @@ export function Features() {
         backgroundColor: `#000000`,
         bgTransparent: false,
         fontSize: 20,
-        frames: [frameState.selectedFrame],
         secondsRange: {
           start: 0,
           end: 1,
@@ -59,7 +58,6 @@ export function Features() {
         height: 200,
         x: 20,
         y: 20,
-        frames: [frameState.selectedFrame],
         secondsRange: {
           start: 0,
           end: 1,

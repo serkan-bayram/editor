@@ -1,23 +1,23 @@
-import type { Image } from "./frame";
+import type { Image } from "./video";
 import { useAppSelector, useDraggable } from "@/lib/hooks";
 import NextImage from "next/image";
 import { Rnd } from "react-rnd";
 
 export function Images() {
-  const images = useAppSelector((state) => state.frame.images);
-  const currentTime = useAppSelector((state) => state.frame.currentTime);
+  const images = useAppSelector((state) => state.video.images);
+  const currentTime = useAppSelector((state) => state.video.currentTime);
 
-  const frameImages = images.filter(
+  const currentImages = images.filter(
     (image) =>
       image.secondsRange.start <= currentTime &&
       image.secondsRange.end >= currentTime
   );
 
-  return frameImages.map((image) => <Image key={image.id} image={image} />);
+  return currentImages.map((image) => <Image key={image.id} image={image} />);
 }
 
 export function Image({ image }: { image: Image }) {
-  const videoId = useAppSelector((state) => state.frame.videoId);
+  const videoId = useAppSelector((state) => state.video.videoId);
 
   const { setPosition, setFocus, setSize } = useDraggable(image);
 

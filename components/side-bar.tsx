@@ -3,18 +3,17 @@ import { EditText } from "./ui/edit-text";
 import { Features } from "./ui/editor-bar-features";
 import { EditImage } from "./ui/edit-image";
 import { useHotkeys } from "react-hotkeys-hook";
-import { addComponent } from "@/lib/features/frame/frameSlice";
+import { addComponent } from "@/lib/features/video/videoSlice";
 
 export function SideBar() {
   const focusedComponent = useAppSelector(
-    (state) => state.frame.focusedComponent
+    (state) => state.video.focusedComponent
   );
-  const texts = useAppSelector((state) => state.frame.texts);
-  const images = useAppSelector((state) => state.frame.images);
+  const texts = useAppSelector((state) => state.video.texts);
+  const images = useAppSelector((state) => state.video.images);
 
   const dispatch = useAppDispatch();
 
-  // TODO: Paste to end of other component
   useHotkeys(
     ["ctrl+v"],
     () => {
@@ -31,6 +30,10 @@ export function SideBar() {
             addComponent({
               ...image,
               id: window.crypto.randomUUID(),
+              secondsRange: {
+                start: image.secondsRange.end,
+                end: image.secondsRange.end + 0.1,
+              },
             })
           );
           break;
@@ -64,7 +67,7 @@ export function SideBar() {
 
 function EditComponent() {
   const focusedComponent = useAppSelector(
-    (state) => state.frame.focusedComponent
+    (state) => state.video.focusedComponent
   );
 
   if (!focusedComponent) return null;

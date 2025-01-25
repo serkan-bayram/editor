@@ -1,9 +1,9 @@
-import { setFocus, updateComponent } from "@/lib/features/frame/frameSlice";
+import { setFocus, updateComponent } from "@/lib/features/video/videoSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { ReactNode, useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
-import { Image, Text } from "../frame";
+import { Image, Text } from "../video";
 
 const DEFAULT_WIDTH = 200;
 
@@ -19,10 +19,10 @@ export function TimelineElement({
   const dispatch = useAppDispatch();
 
   const focusedComponent = useAppSelector(
-    (state) => state.frame.focusedComponent
+    (state) => state.video.focusedComponent
   );
 
-  const videoDuration = useAppSelector((state) => state.frame.videoDuration);
+  const videoDuration = useAppSelector((state) => state.video.videoDuration);
 
   const isFocused = focusedComponent?.id === component.id;
 

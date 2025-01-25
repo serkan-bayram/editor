@@ -6,9 +6,9 @@ export function TimelineElements({
 }: {
   thumbnailsContainerWidth: number;
 }) {
-  const texts = useAppSelector((state) => state.frame.texts);
-  const images = useAppSelector((state) => state.frame.images);
-  const videoId = useAppSelector((state) => state.frame.videoId);
+  const texts = useAppSelector((state) => state.video.texts);
+  const images = useAppSelector((state) => state.video.images);
+  const videoId = useAppSelector((state) => state.video.videoId);
 
   return (
     <div

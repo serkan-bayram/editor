@@ -4,7 +4,7 @@ import {
   setCurrentTime,
   setIsHoldingSlider,
   setTimelineSliderPos,
-} from "@/lib/features/frame/frameSlice";
+} from "@/lib/features/video/videoSlice";
 import { Rnd } from "react-rnd";
 import { TimelineElements } from "./timeline-elements";
 
@@ -13,13 +13,13 @@ const THUMBNAIL_ITEM_WIDTH = 112;
 export function Timeline() {
   const dispatch = useAppDispatch();
 
-  const videoDuration = useAppSelector((state) => state.frame.videoDuration);
+  const videoDuration = useAppSelector((state) => state.video.videoDuration);
   const timelineSliderPos = useAppSelector(
-    (state) => state.frame.timelineSliderPos
+    (state) => state.video.timelineSliderPos
   );
-  const currentTime = useAppSelector((state) => state.frame.currentTime);
+  const currentTime = useAppSelector((state) => state.video.currentTime);
   const isHoldingSlider = useAppSelector(
-    (state) => state.frame.isHoldingSlider
+    (state) => state.video.isHoldingSlider
   );
 
   const [thumbnailsContainerWidth, setThumbnailsContainerWidth] = useState(
