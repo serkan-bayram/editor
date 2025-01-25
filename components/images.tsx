@@ -24,7 +24,7 @@ export function Image({ image }: { image: Image }) {
   return (
     <Rnd
       className="z-50"
-      size={{ width: image.width / 2, height: image.height / 2 }}
+      size={{ width: image.width, height: image.height }}
       position={{
         x: image.x,
         y: image.y,

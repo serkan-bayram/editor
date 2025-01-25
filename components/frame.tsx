@@ -3,7 +3,9 @@ import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
+  setClientVideoDimensions,
   setCurrentTime,
+  setRealVideoDimensions,
   setVideoDuration,
 } from "@/lib/features/frame/frameSlice";
 import { Images } from "./images";
@@ -53,6 +55,17 @@ export function Frame() {
     videoRef.current.currentTime = currentTime;
   }, [videoRef.current, currentTime, isHoldingSlider]);
 
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    dispatch(
+      setClientVideoDimensions({
+        width: videoRef.current.clientWidth,
+        height: videoRef.current.clientHeight,
+      })
+    );
+  }, [videoRef.current]);
+
   return (
     <>
       <div className="flex relative w-full   flex-col items-center">
@@ -65,12 +78,17 @@ export function Frame() {
           <video
             onLoadedMetadata={(e) => {
               dispatch(setVideoDuration(e.currentTarget.duration));
+              dispatch(
+                setRealVideoDimensions({
+                  width: e.currentTarget.videoWidth,
+                  height: e.currentTarget.videoHeight,
+                })
+              );
             }}
             onTimeUpdate={(e) => {
               dispatch(setCurrentTime(e.currentTarget.currentTime));
             }}
             ref={videoRef}
-            height={400}
             controls
             className="bg-black rounded-md w-full -z-50 "
             src={`/${videoId}/original.mp4`}

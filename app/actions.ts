@@ -58,7 +58,36 @@ export async function uploadVideo(formData: FormData) {
 }
 
 export async function makeVideo(videoId: string, frameState: FrameState) {
-  const { texts, images } = frameState;
+  const {
+    texts: originalTexts,
+    images: originalImages,
+    realVideoDimensions,
+    clientVideoDimensions,
+  } = frameState;
+
+  const { width: clientWidth, height: clientHeight } = clientVideoDimensions;
+  const { width: realWidth, height: realHeight } = realVideoDimensions;
+
+  // We scale x and y values to real video
+  const texts = originalTexts.map((text) => ({
+    ...text,
+    x: (realWidth * text.x) / clientWidth,
+    y: (realHeight * text.y) / clientHeight,
+  }));
+  // We can do the max min thing here too but I don't want to calculate text width and heights to do that
+
+  const images = originalImages.map((image) => ({
+    ...image,
+    // So image won't overflow to sides
+    x: Math.max(
+      0,
+      Math.min(realWidth - image.width, (realWidth * image.x) / clientWidth)
+    ),
+    y: Math.max(
+      0,
+      Math.min(realHeight - image.height, (realHeight * image.y) / clientHeight)
+    ),
+  }));
 
   const videoInputPath = join(UPLOADS_PATH, videoId, "original.mp4");
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");

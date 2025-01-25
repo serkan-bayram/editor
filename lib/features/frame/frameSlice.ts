@@ -7,7 +7,8 @@ export interface FrameState {
   videoId: string;
   selectedFrame: number;
   excludedFrames: number[];
-
+  realVideoDimensions: { width: number; height: number };
+  clientVideoDimensions: { width: number; height: number };
   focusedComponent: FocusedComponent | undefined;
   texts: Text[];
   images: Image[];
@@ -26,6 +27,8 @@ export type FocusedComponent = {
 const initialState: FrameState = {
   videoId: "",
   selectedFrame: 1,
+  realVideoDimensions: { width: 0, height: 0 },
+  clientVideoDimensions: { width: 0, height: 0 },
   currentTime: 1,
   videoDuration: 1,
   excludedFrames: [],
@@ -187,6 +190,18 @@ export const frameSlice = createSlice({
     setIsHoldingSlider: (state, action: PayloadAction<boolean>) => {
       state.isHoldingSlider = action.payload;
     },
+    setRealVideoDimensions: (
+      state,
+      action: PayloadAction<{ width: number; height: number }>
+    ) => {
+      state.realVideoDimensions = action.payload;
+    },
+    setClientVideoDimensions: (
+      state,
+      action: PayloadAction<{ width: number; height: number }>
+    ) => {
+      state.clientVideoDimensions = action.payload;
+    },
   },
 });
 
@@ -202,6 +217,8 @@ export const {
   setVideoDuration,
   setCurrentTime,
   setIsHoldingSlider,
+  setRealVideoDimensions,
+  setClientVideoDimensions,
 } = frameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
