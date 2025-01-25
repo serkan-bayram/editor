@@ -55,24 +55,18 @@ export const frameSlice = createSlice({
     updateComponent: (state, action: PayloadAction<Text | Image>) => {
       switch (action.payload.type) {
         case "text":
-          const texts = state.texts.filter(
-            (text) => text.id !== action.payload.id
+          const texts = state.texts.map((text) =>
+            text.id === action.payload.id ? action.payload : text
           );
 
-          // TODO:WE should fix this because their order changes on timeline
-
-          texts.push(action.payload);
-
-          state.texts = texts;
+          state.texts = texts as Text[];
           break;
         case "image":
-          const images = state.images.filter(
-            (text) => text.id !== action.payload.id
+          const images = state.images.map((image) =>
+            image.id === action.payload.id ? action.payload : image
           );
 
-          images.push(action.payload);
-
-          state.images = images;
+          state.images = images as Image[];
           break;
         default:
           break;

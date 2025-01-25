@@ -1,10 +1,4 @@
-import {
-  setCurrentTime,
-  setFocus,
-  setIsHoldingSlider,
-  setTimelineSliderPos,
-  updateComponent,
-} from "@/lib/features/frame/frameSlice";
+import { setFocus, updateComponent } from "@/lib/features/frame/frameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { ReactNode, useEffect, useState } from "react";
@@ -33,7 +27,9 @@ export function TimelineElement({
   const isFocused = focusedComponent?.id === component.id;
 
   const [width, setWidth] = useState(DEFAULT_WIDTH);
-  const [xPos, setXPos] = useState(0);
+  const [xPos, setXPos] = useState(
+    (component.secondsRange.start / videoDuration) * thumbnailsContainerWidth
+  );
 
   useEffect(() => {
     const start = videoDuration / (thumbnailsContainerWidth / xPos);
@@ -49,7 +45,7 @@ export function TimelineElement({
 
   return (
     <div
-      className="h-8 relative"
+      className="h-[40px] relative"
       style={{ width: `${thumbnailsContainerWidth}px` }}
     >
       <Rnd
@@ -67,11 +63,19 @@ export function TimelineElement({
         onDrag={(_, data) => {
           setXPos(data.x);
         }}
-        className={cn(`bg-secondary/20`, {
+        className={cn(`bg-secondary/20 overflow-hidden`, {
           "outline outline-2 outline-white rounded-sm": isFocused,
         })}
-        default={{ x: 0, y: 0, width: `${DEFAULT_WIDTH}px`, height: "32px" }}
-        minWidth={"10px"}
+        default={{
+          // This formula gives xPos
+          x:
+            (component.secondsRange.start / videoDuration) *
+            thumbnailsContainerWidth,
+          y: 0,
+          width: `${DEFAULT_WIDTH}px`,
+          height: "40px",
+        }}
+        minWidth={"1px"}
         enableResizing={{
           top: false,
           bottom: false,
@@ -79,10 +83,17 @@ export function TimelineElement({
           right: true,
         }}
         bounds={"parent"}
+        resizeHandleClasses={{ left: "z-50", right: "z-50" }}
       >
-        <div className="absolute w-3 h-full bg-purple-400 top-0 left-0 rounded-tl-sm rounded-bl-sm"></div>
-        {children}
-        <div className="absolute w-3 h-full bg-purple-400 top-0 right-0 rounded-tr-sm rounded-br-sm"></div>
+        <div className="flex  w-full overflow-hidden h-full justify-between items-center">
+          <div className="w-3 z-20 h-full flex items-center justify-center bg-purple-400 rounded-tl-sm rounded-bl-sm">
+            <div className="w-[2px] h-[50%] rounded-full bg-white"></div>
+          </div>
+          {children}
+          <div className="w-3 z-20 h-full bg-purple-400 rounded-tr-sm rounded-br-sm flex items-center justify-center ">
+            <div className="w-[2px] h-[50%] rounded-full bg-white"></div>
+          </div>
+        </div>
       </Rnd>
     </div>
   );

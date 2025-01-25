@@ -14,6 +14,7 @@ export function SideBar() {
 
   const dispatch = useAppDispatch();
 
+  // TODO: Paste to end of other component
   useHotkeys(
     ["ctrl+v"],
     () => {
@@ -26,12 +27,26 @@ export function SideBar() {
             (image) => image.id === focusedComponent.id
           );
           if (!image) return;
-          dispatch(addComponent({ ...image, id: window.crypto.randomUUID() }));
+          dispatch(
+            addComponent({
+              ...image,
+              id: window.crypto.randomUUID(),
+            })
+          );
           break;
         case "text":
           const text = texts.find((text) => text.id === focusedComponent.id);
           if (!text) return;
-          dispatch(addComponent({ ...text, id: window.crypto.randomUUID() }));
+          dispatch(
+            addComponent({
+              ...text,
+              id: window.crypto.randomUUID(),
+              secondsRange: {
+                start: text.secondsRange.end,
+                end: text.secondsRange.end + 0.1,
+              },
+            })
+          );
           break;
         default:
           break;

@@ -72,7 +72,7 @@ export function EditText({
         <Input
           className="bg-secondary text-primary"
           placeholder="Text"
-          defaultValue={focusedText.text}
+          value={focusedText.text}
           onChange={(ev) =>
             dispatch(
               updateComponent({ ...focusedText, text: ev.currentTarget.value })

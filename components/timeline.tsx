@@ -68,7 +68,7 @@ export function Timeline() {
       >
         <div className="flex  flex-col items-center -translate-y-3">
           <div className="w-5 aspect-square rounded-full bg-gray-400"></div>
-          <div className="w-2 h-64 bg-gray-400 -translate-y-2 rounded-lg"></div>
+          <div className="w-1 h-64 bg-gray-400 -translate-y-2 rounded-lg"></div>
         </div>
       </Rnd>
 

@@ -1,6 +1,5 @@
 import { useAppSelector } from "@/lib/hooks";
 import { TimelineElement } from "./ui/timeline-element";
-import { useHotkeys } from "react-hotkeys-hook";
 
 export function TimelineElements({
   thumbnailsContainerWidth,
@@ -22,7 +21,7 @@ export function TimelineElements({
           thumbnailsContainerWidth={thumbnailsContainerWidth}
           component={text}
         >
-          <div className=" w-full max-w-full overflow-hidden text-center absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 text-white">
+          <div className="text-nowrap absolute left-6 text-center text-white">
             {text.text}
           </div>
         </TimelineElement>
@@ -34,7 +33,7 @@ export function TimelineElements({
           component={image}
           thumbnailsContainerWidth={thumbnailsContainerWidth}
         >
-          <div className="h-full overflow-hidden absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 text-white">
+          <div className="absolute left-6 text-white text-center">
             <div className="flex gap-x-2 items-center">
               <div className="w-8 h-8 flex items-center justify-center overflow-hidden">
                 <img

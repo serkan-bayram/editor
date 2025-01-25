@@ -28,7 +28,7 @@ export function Features() {
         fontSize: 20,
         frames: [frameState.selectedFrame],
         secondsRange: {
-          start: 1,
+          start: 0,
           end: 1,
         },
       })
@@ -61,7 +61,7 @@ export function Features() {
         y: 20,
         frames: [frameState.selectedFrame],
         secondsRange: {
-          start: 1,
+          start: 0,
           end: 1,
         },
       })
