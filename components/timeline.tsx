@@ -1,101 +1,140 @@
-import Image from "next/image";
-import { memo } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "./ui/input";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setSelectedFrame } from "@/lib/features/frame/frameSlice";
+import {
+  setCurrentTime,
+  setIsHoldingSlider,
+  setTimelineSliderPos,
+} from "@/lib/features/video/videoSlice";
+import { Rnd } from "react-rnd";
+import { TimelineElements } from "./timeline-elements";
 
-const FPS_RATE = 30;
+const THUMBNAIL_ITEM_WIDTH = 112;
 
-export const Timeline = memo(function Timeline({
-  frameCount,
-}: {
-  frameCount: number;
-}) {
+export function Timeline() {
   const dispatch = useAppDispatch();
-  const videoId = useAppSelector((state) => state.frame.videoId);
+
+  const videoDuration = useAppSelector((state) => state.video.videoDuration);
+  const timelineSliderPos = useAppSelector(
+    (state) => state.video.timelineSliderPos
+  );
+  const currentTime = useAppSelector((state) => state.video.currentTime);
+  const isHoldingSlider = useAppSelector(
+    (state) => state.video.isHoldingSlider
+  );
+
+  const [thumbnailsContainerWidth, setThumbnailsContainerWidth] = useState(
+    8 * THUMBNAIL_ITEM_WIDTH
+  );
+
+  const thumbnailsContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isHoldingSlider) return;
+
+    dispatch(
+      setTimelineSliderPos(
+        (thumbnailsContainerWidth / videoDuration) * currentTime
+      )
+    );
+  }, [currentTime]);
+
+  // useEffect(() => {
+  //   if (!thumbnailsContainerRef.current) return;
+
+  //   setThumbnailsContainerWidth(thumbnailsContainerRef.current.clientWidth);
+  // }, [thumbnailsContainerRef.current]);
 
   return (
-    <Tabs defaultValue="frames">
-      <div className="flex items-center justify-between w-full">
-        <TabsList>
-          <TabsTrigger value="frames">Frames</TabsTrigger>
-          <TabsTrigger value="seconds">Seconds</TabsTrigger>
-        </TabsList>
+    <div className="h-60  mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full ">
+      <Rnd
+        className="z-20"
+        position={{ x: timelineSliderPos, y: 0 }}
+        onDrag={(_, data) => {
+          dispatch(setTimelineSliderPos(data.x));
 
-        <div className="flex gap-x-2 items-center">
-          <div>(Total {frameCount} frames)</div>
-
-          <Input
-            onChange={(ev) => {
-              const value = ev.currentTarget.value;
-
-              if (parseInt(value)) {
-                const frame = parseInt(value);
-
-                const frameDOM = document.querySelector(`#frame-${frame}`);
-
-                if (frameDOM) {
-                  frameDOM.scrollIntoView(false);
-                  dispatch(setSelectedFrame(frame));
-                }
-              }
-            }}
-            className="w-36"
-            placeholder="Go to frame"
-            type="number"
-          />
+          dispatch(
+            setCurrentTime(videoDuration / (thumbnailsContainerWidth / data.x))
+          );
+        }}
+        onDragStart={() => {
+          dispatch(setIsHoldingSlider(true));
+        }}
+        onDragStop={() => {
+          dispatch(setIsHoldingSlider(false));
+        }}
+        dragAxis="x"
+        bounds={"parent"}
+        enableResizing={false}
+      >
+        <div className="flex  flex-col items-center -translate-y-3">
+          <div className="w-5 aspect-square rounded-full bg-gray-400"></div>
+          <div className="w-1 h-64 bg-gray-400 -translate-y-2 rounded-lg"></div>
         </div>
+      </Rnd>
+
+      <div
+        // ref={timeIndicatorsContainerRef}
+        style={{ width: `${thumbnailsContainerWidth}px` }}
+        className="relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
+      >
+        {Array.from({ length: videoDuration / 5 + 2 }).map((_, index) => {
+          return (
+            <div
+              key={index}
+              className="absolute h-4 w-2 text-white"
+              style={{
+                left: `${
+                  (thumbnailsContainerWidth / (videoDuration / 5)) * index
+                }px`,
+              }}
+            >
+              {index * 5}s
+            </div>
+          );
+        })}
       </div>
-      <TabsContent value="frames">
-        <div className="w-full p-2 flex gap-x-4 overflow-x-scroll">
-          {Array.from({ length: frameCount }).map((_, index) => {
-            return (
-              <button
-                id={`frame-${index + 1}`}
-                className="flex-shrink-0 rounded-md hover:opacity-75 transition-opacity"
-                key={index}
-                onClick={() => dispatch(setSelectedFrame(index + 1))}
-              >
-                <Image
-                  loading="lazy"
-                  className="rounded-md"
-                  alt={`Frame ${index + 1}`}
-                  src={`/api/frames/${videoId}/${index + 1}`}
-                  width={192}
-                  height={96}
-                />
-                Frame {index + 1}
-              </button>
-            );
-          })}
-        </div>
-      </TabsContent>
-      <TabsContent value="seconds">
-        <div className="w-full p-2 flex gap-x-4 overflow-x-scroll">
-          {Array.from({ length: frameCount }).map((_, index) => {
-            if (index % FPS_RATE !== 0) return;
 
-            return (
-              <button
-                className="flex-shrink-0 rounded-md hover:opacity-75 transition-opacity"
-                key={index}
-                onClick={() => dispatch(setSelectedFrame(index + 1))}
-              >
-                <Image
-                  loading="lazy"
-                  className="rounded-md"
-                  alt={`Frame ${index + 1}`}
-                  src={`/api/frames/${videoId}/${index + 1}`}
-                  width={192}
-                  height={96}
-                />
-                {index / FPS_RATE + 1}. Second
-              </button>
-            );
-          })}
+      <div className="h-full overflow-y-auto flex gap-y-2 px-2 flex-col relative">
+        <div
+          ref={thumbnailsContainerRef}
+          className="absolute left-2 top-2 flex justify-start"
+        >
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
+          <div
+            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
+            className="aspect-video border"
+          ></div>
         </div>
-      </TabsContent>
-    </Tabs>
+
+        <TimelineElements thumbnailsContainerWidth={thumbnailsContainerWidth} />
+      </div>
+    </div>
   );
-});
+}

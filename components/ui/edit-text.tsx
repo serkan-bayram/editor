@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   FocusedComponent,
   updateComponent,
-} from "@/lib/features/frame/frameSlice";
+} from "@/lib/features/video/videoSlice";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./input";
@@ -13,14 +13,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { FrameRange } from "./frame-range";
 
 export function EditText({
   focusedComponent,
 }: {
   focusedComponent: FocusedComponent;
 }) {
-  const texts = useAppSelector((state) => state.frame.texts);
+  const texts = useAppSelector((state) => state.video.texts);
   const focusedText = texts.find((text) => text.id === focusedComponent?.id);
 
   const dispatch = useAppDispatch();
@@ -73,7 +72,7 @@ export function EditText({
         <Input
           className="bg-secondary text-primary"
           placeholder="Text"
-          defaultValue={focusedText.text}
+          value={focusedText.text}
           onChange={(ev) =>
             dispatch(
               updateComponent({ ...focusedText, text: ev.currentTarget.value })
@@ -81,10 +80,6 @@ export function EditText({
           }
         />
       </div>
-
-      <Separator className="bg-secondary/25" orientation="horizontal" />
-
-      <FrameRange focusedComponent={focusedText} />
 
       <Separator className="bg-secondary/25" orientation="horizontal" />
 

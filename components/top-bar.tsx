@@ -1,17 +1,13 @@
 import { Button } from "./ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  deleteComponent,
-  setFocus,
-  updateComponent,
-} from "@/lib/features/frame/frameSlice";
+import { deleteComponent, setFocus } from "@/lib/features/video/videoSlice";
 import { Separator } from "./ui/separator";
 
 export function TopBar() {
   const dispatch = useAppDispatch();
 
-  const { texts, images, selectedFrame, focusedComponent } = useAppSelector(
-    (state) => state.frame
+  const { texts, images, focusedComponent } = useAppSelector(
+    (state) => state.video
   );
 
   if (!focusedComponent) return <div className="h-10 mb-1"></div>;
@@ -41,38 +37,6 @@ export function TopBar() {
       <Separator className="bg-secondary/25 h-2/3" orientation="vertical" />
 
       <Button
-        className="text-secondary"
-        variant={"ghost"}
-        size={"sm"}
-        onClick={() => {
-          if (focusedText) {
-            dispatch(
-              updateComponent({
-                ...focusedText,
-                frames: focusedText.frames.filter(
-                  (frame) => frame !== selectedFrame
-                ),
-              })
-            );
-          } else if (focusedImage) {
-            dispatch(
-              updateComponent({
-                ...focusedImage,
-                frames: focusedImage.frames.filter(
-                  (frame) => frame !== selectedFrame
-                ),
-              })
-            );
-          }
-          dispatch(setFocus(undefined));
-        }}
-      >
-        Remove From This Frame
-      </Button>
-
-      <Separator className="bg-secondary/25 h-2/3" orientation="vertical" />
-
-      <Button
         className="bg-red-700 hover:bg-red-900 "
         size={"sm"}
         onClick={() => {
@@ -84,7 +48,7 @@ export function TopBar() {
           dispatch(setFocus(undefined));
         }}
       >
-        Remove From Every Frame
+        Remove
       </Button>
     </div>
   );
