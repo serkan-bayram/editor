@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/lib/store";
-import type { Text, Image } from "@/components/video";
+import { type Text, type Image, CLIENT_DIMENSIONS } from "@/components/video";
 
 // Define a type for the slice state
 export interface VideoState {
@@ -25,7 +25,10 @@ export type FocusedComponent = {
 const initialState: VideoState = {
   videoId: "",
   realVideoDimensions: { width: 0, height: 0 },
-  clientVideoDimensions: { width: 0, height: 0 },
+  clientVideoDimensions: {
+    width: CLIENT_DIMENSIONS.width,
+    height: CLIENT_DIMENSIONS.height,
+  },
   currentTime: 1,
   videoDuration: 1,
   focusedComponent: undefined,

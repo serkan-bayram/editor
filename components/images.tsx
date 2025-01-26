@@ -31,7 +31,7 @@ export function Image({ image }: { image: Image }) {
       }}
       bounds={"parent"}
       onDragStop={(_, data) => setPosition(data)}
-      onResizeStop={(_, __, ref) => setSize(ref, image)}
+      onResizeStop={(_, __, ref) => setSize(ref)}
       onMouseDown={() => setFocus()}
     >
       <NextImage

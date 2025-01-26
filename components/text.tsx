@@ -17,11 +17,11 @@ export function Texts() {
 }
 
 export function Text({ text }: { text: Text }) {
-  const { setPosition, setFocus } = useDraggable(text);
+  const { setPosition, setFocus, setSize } = useDraggable(text);
 
   return (
     <Rnd
-      className={cn("px-2 z-50 text-nowrap flex items-center justify-center")}
+      className={cn("px-2 z-50 text-center text-nowrap ")}
       style={{
         fontSize: `${text.fontSize}px`,
         color: `${text.textColor}`,
@@ -33,12 +33,13 @@ export function Text({ text }: { text: Text }) {
         x: text.x,
         y: text.y,
       }}
+      size={{ width: text.width, height: text.height }}
       bounds={"parent"}
-      enableResizing={false}
+      onResizeStop={(_, __, ref) => setSize(ref)}
       onDragStop={(_, data) => setPosition(data)}
       onMouseDown={() => setFocus()}
     >
-      {text.text}
+      <div className="h-full flex items-center justify-center">{text.text}</div>
     </Rnd>
   );
 }

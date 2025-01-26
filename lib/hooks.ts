@@ -14,6 +14,12 @@ export const useAppStore = useStore.withTypes<AppStore>();
 
 export function useDraggable(focusedComponent: Text | Image) {
   const dispatch = useAppDispatch();
+  const realDimensions = useAppSelector(
+    (state) => state.video.realVideoDimensions
+  );
+  const clientDimensions = useAppSelector(
+    (state) => state.video.clientVideoDimensions
+  );
 
   function setFocus() {
     dispatch(
@@ -30,16 +36,22 @@ export function useDraggable(focusedComponent: Text | Image) {
         ...focusedComponent,
         x: data.lastX,
         y: data.lastY,
+        realX: (realDimensions.width * data.lastX) / clientDimensions.width,
+        realY: (realDimensions.height * data.lastY) / clientDimensions.height,
       })
     );
   }
 
-  function setSize(ref: HTMLElement, focusedComponent: Image) {
+  function setSize(ref: HTMLElement) {
     dispatch(
       updateComponent({
         ...focusedComponent,
-        width: parseFloat(ref.style.width),
-        height: parseFloat(ref.style.height),
+        width: ref.clientWidth,
+        height: ref.clientHeight,
+        realWidth:
+          (realDimensions.width * ref.clientWidth) / clientDimensions.width,
+        realHeight:
+          (realDimensions.height * ref.clientHeight) / clientDimensions.height,
       })
     );
   }

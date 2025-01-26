@@ -66,7 +66,7 @@ export function Timeline() {
         bounds={"parent"}
         enableResizing={false}
       >
-        <div className="flex  flex-col items-center -translate-y-3">
+        <div className="flex flex-col items-center -translate-y-3">
           <div className="w-5 aspect-square rounded-full bg-gray-400"></div>
           <div className="w-1 h-64 bg-gray-400 -translate-y-2 rounded-lg"></div>
         </div>
@@ -77,18 +77,18 @@ export function Timeline() {
         style={{ width: `${thumbnailsContainerWidth}px` }}
         className="relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
       >
-        {Array.from({ length: videoDuration / 5 + 2 }).map((_, index) => {
+        {Array.from({ length: videoDuration / 10 + 2 }).map((_, index) => {
           return (
             <div
               key={index}
               className="absolute h-4 w-2 text-white"
               style={{
                 left: `${
-                  (thumbnailsContainerWidth / (videoDuration / 5)) * index
+                  (thumbnailsContainerWidth / (videoDuration / 10)) * index
                 }px`,
               }}
             >
-              {index * 5}s
+              {index * 10}s
             </div>
           );
         })}

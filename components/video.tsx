@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
-  setClientVideoDimensions,
   setCurrentTime,
   setRealVideoDimensions,
   setVideoDuration,
@@ -14,6 +13,12 @@ export interface VideoComponent {
   id: string;
   x: number;
   y: number;
+  realX: number; // These are calculated via the real dimensions of video
+  realY: number;
+  width: number;
+  height: number;
+  realWidth: number;
+  realHeight: number;
   secondsRange: {
     start: number;
     end: number;
@@ -32,9 +37,12 @@ export interface Text extends VideoComponent {
 export interface Image extends VideoComponent {
   type: "image";
   imageName: string;
-  width: number;
-  height: number;
 }
+
+export const CLIENT_DIMENSIONS = {
+  width: 800,
+  height: 400,
+};
 
 export function Video() {
   const videoId = useAppSelector((state) => state.video.videoId);
@@ -54,21 +62,16 @@ export function Video() {
     videoRef.current.currentTime = currentTime;
   }, [videoRef.current, currentTime, isHoldingSlider]);
 
-  useEffect(() => {
-    if (!videoRef.current) return;
-
-    dispatch(
-      setClientVideoDimensions({
-        width: videoRef.current.clientWidth,
-        height: videoRef.current.clientHeight,
-      })
-    );
-  }, [videoRef.current]);
-
   return (
     <>
-      <div className="flex relative w-full   flex-col items-center">
-        <div className="relative overflow-hidden w-full">
+      <div className="flex relative w-full flex-col items-center">
+        <div
+          style={{
+            width: CLIENT_DIMENSIONS.width,
+            height: CLIENT_DIMENSIONS.height,
+          }}
+          className="relative overflow-hidden flex items-center justify-center"
+        >
           <div className="w-full h-full absolute">
             <Texts />
             <Images />
@@ -77,6 +80,7 @@ export function Video() {
           <video
             onLoadedMetadata={(e) => {
               dispatch(setVideoDuration(e.currentTarget.duration));
+
               dispatch(
                 setRealVideoDimensions({
                   width: e.currentTarget.videoWidth,
@@ -89,7 +93,7 @@ export function Video() {
             }}
             ref={videoRef}
             controls
-            className="bg-black rounded-md w-full -z-50 "
+            className="bg-black rounded-md w-full h-full object-cover "
             src={`/${videoId}/original.mp4`}
           ></video>
         </div>
