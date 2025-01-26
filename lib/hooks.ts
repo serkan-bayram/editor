@@ -5,7 +5,7 @@ import {
   setFocus as setComponentFocus,
   updateComponent,
 } from "./features/video/videoSlice";
-import { DraggableData } from "react-rnd";
+import { DraggableData, Position } from "react-rnd";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
@@ -42,12 +42,16 @@ export function useDraggable(focusedComponent: Text | Image) {
     );
   }
 
-  function setSize(ref: HTMLElement) {
+  function setSize(ref: HTMLElement, position: Position) {
     dispatch(
       updateComponent({
         ...focusedComponent,
         width: ref.clientWidth,
         height: ref.clientHeight,
+        x: position.x,
+        y: position.y,
+        realX: (realDimensions.width * position.x) / clientDimensions.width,
+        realY: (realDimensions.height * position.y) / clientDimensions.height,
         realWidth:
           (realDimensions.width * ref.clientWidth) / clientDimensions.width,
         realHeight:

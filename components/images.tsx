@@ -2,6 +2,7 @@ import type { Image } from "./video";
 import { useAppSelector, useDraggable } from "@/lib/hooks";
 import NextImage from "next/image";
 import { Rnd } from "react-rnd";
+import { HandleComponent } from "./ui/handle-component";
 
 export function Images() {
   const images = useAppSelector((state) => state.video.images);
@@ -31,8 +32,9 @@ export function Image({ image }: { image: Image }) {
       }}
       bounds={"parent"}
       onDragStop={(_, data) => setPosition(data)}
-      onResizeStop={(_, __, ref) => setSize(ref)}
+      onResizeStop={(_, __, ref, ___, position) => setSize(ref, position)}
       onMouseDown={() => setFocus()}
+      resizeHandleComponent={{ bottomRight: <HandleComponent /> }}
     >
       <NextImage
         alt="Added Image"
