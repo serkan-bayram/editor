@@ -10,7 +10,7 @@ export default async function Video({
   return (
     <div className="min-h-screen flex justify-center items-center">
       <div className="w-full flex items-center justify-center">
-        <div className="w-[80%]">
+        <div className="w-[80%]" data-focus-container="true">
           <EditVideo videoId={videoId} />
         </div>
       </div>

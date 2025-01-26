@@ -3,6 +3,7 @@ import { useAppSelector, useDraggable } from "@/lib/hooks";
 import NextImage from "next/image";
 import { Rnd } from "react-rnd";
 import { HandleComponent } from "./ui/handle-component";
+import { cn } from "@/lib/utils";
 
 export function Images() {
   const images = useAppSelector((state) => state.video.images);
@@ -19,12 +20,17 @@ export function Images() {
 
 export function Image({ image }: { image: Image }) {
   const videoId = useAppSelector((state) => state.video.videoId);
+  const focusedComponent = useAppSelector(
+    (state) => state.video.focusedComponent
+  );
 
   const { setPosition, setFocus, setSize } = useDraggable(image);
 
   return (
     <Rnd
-      className="z-50"
+      className={cn("z-50", {
+        "border-2 border-purple-400": focusedComponent?.id === image.id,
+      })}
       size={{ width: image.width, height: image.height }}
       position={{
         x: image.x,
