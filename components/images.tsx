@@ -6,7 +6,7 @@ import { HandleComponent } from "./ui/handle-component";
 import { cn } from "@/lib/utils";
 
 export function Images() {
-  const images = useAppSelector((state) => state.video.images);
+  const images = useAppSelector((state) => state.feature.images);
   const currentTime = useAppSelector((state) => state.video.currentTime);
 
   const currentImages = images.filter(
@@ -21,7 +21,7 @@ export function Images() {
 export function Image({ image }: { image: Image }) {
   const videoId = useAppSelector((state) => state.video.videoId);
   const focusedComponent = useAppSelector(
-    (state) => state.video.focusedComponent
+    (state) => state.feature.focusedComponent
   );
 
   const { setPosition, setFocus, setSize } = useDraggable(image);
@@ -37,8 +37,9 @@ export function Image({ image }: { image: Image }) {
         y: image.y,
       }}
       bounds={"parent"}
-      onDragStop={(_, data) => setPosition(data)}
       onResizeStop={(_, __, ref, ___, position) => setSize(ref, position)}
+      onResizeStart={() => setFocus()}
+      onDragStop={(_, data) => setPosition(data)}
       onMouseDown={() => setFocus()}
       resizeHandleComponent={{ bottomRight: <HandleComponent /> }}
     >

@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import videoReducer from "./features/video/videoSlice";
+import videoReducer from "./features/videoSlice";
+import featureReducer from "./features/featureSlice";
+import timelineReducer from "./features/timelineSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       video: videoReducer,
+      feature: featureReducer,
+      timeline: timelineReducer,
     },
   });
 };

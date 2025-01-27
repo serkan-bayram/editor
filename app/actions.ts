@@ -7,7 +7,7 @@ import { join } from "path";
 import { redirect } from "next/navigation";
 import ffmpeg from "fluent-ffmpeg";
 import { UPLOADS_PATH } from "./paths";
-import { VideoState } from "@/lib/features/video/videoSlice";
+import { AppState } from "@/lib/features/videoSlice";
 
 export async function uploadImage(imageFile: File, videoId: string) {
   if (!imageFile) throw new Error("No file uploaded");
@@ -54,8 +54,8 @@ export async function uploadVideo(formData: FormData) {
   return redirect(`/video/${videoId}`);
 }
 
-export async function makeVideo(videoId: string, frameState: VideoState) {
-  const { texts, images } = frameState;
+export async function makeVideo(videoId: string, appState: AppState) {
+  const { texts, images } = appState;
 
   const videoInputPath = join(UPLOADS_PATH, videoId, "original.mp4");
   const outputVideo = join(UPLOADS_PATH, videoId, "edited_video.mp4");

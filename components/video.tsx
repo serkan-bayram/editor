@@ -6,8 +6,10 @@ import {
   setCurrentTime,
   setRealVideoDimensions,
   setVideoDuration,
-} from "@/lib/features/video/videoSlice";
+} from "@/lib/features/videoSlice";
 import { Images } from "./images";
+import { setTimelineSliderPos } from "@/lib/features/timelineSlice";
+import { calculateSliderPosWithCurrentTime } from "@/lib/utils";
 
 export interface VideoComponent {
   id: string;
@@ -39,16 +41,17 @@ export interface Image extends VideoComponent {
   imageName: string;
 }
 
-export const CLIENT_DIMENSIONS = {
-  width: 800,
-  height: 400,
-};
-
 export function Video() {
   const videoId = useAppSelector((state) => state.video.videoId);
+  const videoDuration = useAppSelector((state) => state.video.videoDuration);
   const currentTime = useAppSelector((state) => state.video.currentTime);
+  const { client } = useAppSelector((state) => state.video.videoDimensions);
+
   const isHoldingSlider = useAppSelector(
-    (state) => state.video.isHoldingSlider
+    (state) => state.timeline.isHoldingSlider
+  );
+  const thumbnailsContainerWidth = useAppSelector(
+    (state) => state.timeline.thumbnailsContainerWidth
   );
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -60,15 +63,15 @@ export function Video() {
     if (!isHoldingSlider) return;
 
     videoRef.current.currentTime = currentTime;
-  }, [videoRef.current, currentTime, isHoldingSlider]);
+  }, [videoRef.current, currentTime]);
 
   return (
     <>
       <div className="flex relative w-full flex-col items-center">
         <div
           style={{
-            width: CLIENT_DIMENSIONS.width,
-            height: CLIENT_DIMENSIONS.height,
+            width: client.width,
+            height: client.height,
           }}
           className="relative overflow-hidden flex items-center justify-center"
         >
@@ -90,6 +93,16 @@ export function Video() {
             }}
             onTimeUpdate={(e) => {
               dispatch(setCurrentTime(e.currentTarget.currentTime));
+
+              dispatch(
+                setTimelineSliderPos(
+                  calculateSliderPosWithCurrentTime(
+                    thumbnailsContainerWidth,
+                    videoDuration,
+                    e.currentTarget.currentTime
+                  )
+                )
+              );
             }}
             ref={videoRef}
             controls

@@ -5,7 +5,7 @@ import { Rnd } from "react-rnd";
 import { HandleComponent } from "./ui/handle-component";
 
 export function Texts() {
-  const texts = useAppSelector((state) => state.video.texts);
+  const texts = useAppSelector((state) => state.feature.texts);
   const currentTime = useAppSelector((state) => state.video.currentTime);
 
   const currentTexts = texts.filter(
@@ -19,8 +19,9 @@ export function Texts() {
 
 export function Text({ text }: { text: Text }) {
   const { setPosition, setFocus, setSize } = useDraggable(text);
+
   const focusedComponent = useAppSelector(
-    (state) => state.video.focusedComponent
+    (state) => state.feature.focusedComponent
   );
 
   return (
@@ -41,6 +42,7 @@ export function Text({ text }: { text: Text }) {
       }}
       size={{ width: text.width, height: text.height }}
       bounds={"parent"}
+      onResizeStart={() => setFocus()}
       onResizeStop={(_, __, ref, ___, position) => setSize(ref, position)}
       onDragStop={(_, data) => setPosition(data)}
       onMouseDown={() => setFocus()}

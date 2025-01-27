@@ -1,19 +1,22 @@
 import { Button } from "./ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { deleteComponent, setFocus } from "@/lib/features/video/videoSlice";
 import { Separator } from "./ui/separator";
+import { deleteComponent, setFocus } from "@/lib/features/featureSlice";
 
 export function TopBar() {
   const dispatch = useAppDispatch();
 
-  const { texts, images, focusedComponent } = useAppSelector(
-    (state) => state.video
+  const focusedComponent = useAppSelector(
+    (state) => state.feature.focusedComponent
   );
+  const texts = useAppSelector((state) => state.feature.texts);
+  const images = useAppSelector((state) => state.feature.images);
 
   if (!focusedComponent) return <div className="h-10 mb-1"></div>;
 
-  const focusedText = texts.find((text) => text.id === focusedComponent.id);
-  const focusedImage = images.find((image) => image.id === focusedComponent.id);
+  const focusedElement = [...texts, ...images].find(
+    (element) => element.id === focusedComponent.id
+  );
 
   return (
     <div className="bg-primary mb-1 rounded-md flex h-10 items-center justify-end gap-x-4 px-2">
@@ -24,7 +27,6 @@ export function TopBar() {
         {focusedComponent?.component}
       </div>
 
-      {/* Temporary solution */}
       <Button
         className="text-secondary"
         variant={"ghost"}
@@ -40,11 +42,10 @@ export function TopBar() {
         className="bg-red-700 hover:bg-red-900 "
         size={"sm"}
         onClick={() => {
-          if (focusedText) {
-            dispatch(deleteComponent(focusedText));
-          } else if (focusedImage) {
-            dispatch(deleteComponent(focusedImage));
+          if (focusedElement) {
+            dispatch(deleteComponent(focusedElement));
           }
+
           dispatch(setFocus(undefined));
         }}
       >

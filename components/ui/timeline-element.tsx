@@ -1,47 +1,35 @@
-import { setFocus, updateComponent } from "@/lib/features/video/videoSlice";
+import { setFocus, updateComponent } from "@/lib/features/featureSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { cn } from "@/lib/utils";
-import { ReactNode, useEffect, useState } from "react";
+import {
+  calculateCurrentTimeWithSliderPos,
+  calculateSliderPosWithCurrentTime,
+  calculateTimelineElementWidth,
+  cn,
+} from "@/lib/utils";
+import { ReactNode } from "react";
 import { Rnd } from "react-rnd";
 import { Image, Text } from "../video";
 
-const DEFAULT_WIDTH = 200;
-
 export function TimelineElement({
-  thumbnailsContainerWidth,
   children,
   component,
 }: {
-  thumbnailsContainerWidth: number;
   children: ReactNode;
   component: Text | Image;
 }) {
   const dispatch = useAppDispatch();
 
-  const focusedComponent = useAppSelector(
-    (state) => state.video.focusedComponent
+  const thumbnailsContainerWidth = useAppSelector(
+    (state) => state.timeline.thumbnailsContainerWidth
   );
-
+  const focusedComponent = useAppSelector(
+    (state) => state.feature.focusedComponent
+  );
   const videoDuration = useAppSelector((state) => state.video.videoDuration);
 
   const isFocused = focusedComponent?.id === component.id;
 
-  const [width, setWidth] = useState(DEFAULT_WIDTH);
-  const [xPos, setXPos] = useState(
-    (component.secondsRange.start / videoDuration) * thumbnailsContainerWidth
-  );
-
-  useEffect(() => {
-    const start = videoDuration / (thumbnailsContainerWidth / xPos);
-    const end = videoDuration / (thumbnailsContainerWidth / (xPos + width));
-
-    dispatch(
-      updateComponent({
-        ...component,
-        secondsRange: { start: start, end: end },
-      })
-    );
-  }, [width, xPos]);
+  const { secondsRange } = component;
 
   return (
     <div
@@ -49,7 +37,7 @@ export function TimelineElement({
       style={{ width: `${thumbnailsContainerWidth}px` }}
     >
       <Rnd
-        onMouseDown={(e) => {
+        onMouseDown={() => {
           dispatch(
             setFocus({
               id: component.id,
@@ -57,22 +45,60 @@ export function TimelineElement({
             })
           );
         }}
-        onResize={(_, __, ref) => {
-          setWidth(ref.clientWidth);
+        onResize={(_, __, ref, ___, position) => {
+          const start = calculateCurrentTimeWithSliderPos(
+            thumbnailsContainerWidth,
+            videoDuration,
+            position.x
+          );
+          const end = calculateCurrentTimeWithSliderPos(
+            thumbnailsContainerWidth,
+            videoDuration,
+            position.x + ref.clientWidth
+          );
+
+          dispatch(
+            updateComponent({
+              ...component,
+              secondsRange: { start: start, end: end },
+            })
+          );
         }}
         onDrag={(_, data) => {
-          setXPos(data.x);
+          const start = calculateCurrentTimeWithSliderPos(
+            thumbnailsContainerWidth,
+            videoDuration,
+            data.x
+          );
+          const end = calculateCurrentTimeWithSliderPos(
+            thumbnailsContainerWidth,
+            videoDuration,
+            data.x + data.node.clientWidth
+          );
+
+          dispatch(
+            updateComponent({
+              ...component,
+              secondsRange: { start: start, end: end },
+            })
+          );
         }}
         className={cn(`bg-secondary/20 overflow-hidden`, {
           "outline outline-2 outline-white rounded-sm": isFocused,
         })}
         default={{
-          // This formula gives xPos
-          x:
-            (component.secondsRange.start / videoDuration) *
+          x: calculateSliderPosWithCurrentTime(
             thumbnailsContainerWidth,
+            videoDuration,
+            secondsRange.start
+          ),
           y: 0,
-          width: `${DEFAULT_WIDTH}px`,
+          width: calculateTimelineElementWidth(
+            thumbnailsContainerWidth,
+            secondsRange.start,
+            secondsRange.end,
+            videoDuration
+          ),
           height: "40px",
         }}
         minWidth={"1px"}
