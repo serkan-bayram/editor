@@ -4,6 +4,7 @@ import { ClapperboardIcon, ImageIcon, TextCursorInputIcon } from "lucide-react";
 import { Button } from "./button";
 import { ChangeEvent, useRef } from "react";
 import { addComponent } from "@/lib/features/featureSlice";
+import { MakeVideo } from "../make-video";
 
 export function Features() {
   const dispatch = useAppDispatch();
@@ -101,20 +102,5 @@ export function Features() {
 
       <MakeVideo />
     </div>
-  );
-}
-
-function MakeVideo() {
-  const { video, feature, timeline } = useAppSelector((state) => state);
-
-  async function handleMakeVideo() {
-    await makeVideo(video.videoId, { ...video, ...feature, ...timeline });
-  }
-
-  return (
-    <Button variant={"secondary"} className="mt-auto" onClick={handleMakeVideo}>
-      <ClapperboardIcon />
-      Make Video
-    </Button>
   );
 }

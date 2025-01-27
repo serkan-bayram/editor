@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -123,7 +123,7 @@ export function Video() {
             ref={videoRef}
             controls
             className="bg-black rounded-md w-fit h-full object-contain "
-            src={`/${videoId}/original.mp4`}
+            src={`blob:http://localhost:3000/${videoId}`}
           ></video>
         </div>
       </div>

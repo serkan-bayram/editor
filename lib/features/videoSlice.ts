@@ -6,6 +6,7 @@ export interface AppState extends VideoState, FeatureState, TimelineState {}
 
 // Define a type for the slice state
 export interface VideoState {
+  videoSrc: string;
   videoId: string;
   videoDuration: number;
   currentTime: number;
@@ -17,6 +18,7 @@ export interface VideoState {
 
 // Define the initial state using that type
 const initialState: VideoState = {
+  videoSrc: "",
   videoId: "",
   currentTime: 0,
   videoDuration: 0,
@@ -31,6 +33,9 @@ export const videoSlice = createSlice({
   initialState,
   reducers: {
     setVideoId: (state, action: PayloadAction<string>) => {
+      state.videoId = action.payload;
+    },
+    setVideoSrc: (state, action: PayloadAction<string>) => {
       state.videoId = action.payload;
     },
     setVideoDuration: (state, action: PayloadAction<number>) => {
@@ -56,6 +61,7 @@ export const videoSlice = createSlice({
 
 export const {
   setVideoId,
+  setVideoSrc,
   setVideoDuration,
   setCurrentTime,
   setRealVideoDimensions,
