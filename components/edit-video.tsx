@@ -19,7 +19,7 @@ export function EditVideo({ videoId }: { videoId: string }) {
 
   useEffect(() => {
     dispatch(setVideoId(videoId));
-  }, [videoId]);
+  }, [dispatch, videoId]);
 
   useHandleLoseFocus();
   useHandleHotKeys();
@@ -81,7 +81,7 @@ function useHandleHotKeys() {
           break;
       }
     },
-    [focusedComponent, texts, images]
+    [dispatch, focusedComponent, texts, images]
   );
 }
 
@@ -105,5 +105,5 @@ function useHandleLoseFocus() {
     window.addEventListener("click", handleClick);
 
     return () => window.removeEventListener("click", handleClick);
-  }, []);
+  }, [dispatch]);
 }

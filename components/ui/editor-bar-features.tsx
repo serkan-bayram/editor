@@ -1,16 +1,19 @@
-import { makeVideo, uploadImage } from "@/app/actions";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { ClapperboardIcon, ImageIcon, TextCursorInputIcon } from "lucide-react";
+import { ImageIcon, TextCursorInputIcon } from "lucide-react";
 import { Button } from "./button";
 import { ChangeEvent, useRef } from "react";
 import { addComponent } from "@/lib/features/featureSlice";
 import { MakeVideo } from "../make-video";
+import { loadFFmpeg } from "@/lib/utils";
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { fetchFile } from "@ffmpeg/util";
 
 export function Features() {
   const dispatch = useAppDispatch();
 
-  const videoId = useAppSelector((state) => state.video.videoId);
   const currentTime = useAppSelector((state) => state.video.currentTime);
+
+  const ffmpegRef = useRef(new FFmpeg());
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,13 +56,26 @@ export function Features() {
       return;
     }
 
-    const imageName = await uploadImage(files[0], videoId);
+    await loadFFmpeg(ffmpegRef);
+
+    const imageData = await fetchFile(files[0]);
+
+    const imageId = window.crypto.randomUUID();
+
+    await ffmpegRef.current.writeFile(`${imageId}.jpg`, imageData);
+
+    const data = await ffmpegRef.current.readFile(`${imageId}.jpg`);
+
+    const src = URL.createObjectURL(new Blob([data], { type: "image/jpeg" }));
+
+    const arr = src.split("/");
 
     dispatch(
       addComponent({
         type: "image",
-        id: window.crypto.randomUUID(),
-        imageName: imageName,
+        id: imageId,
+        imageName: imageId,
+        imageSrc: arr[arr.length - 1],
         width: 200,
         height: 200,
         x: 20,

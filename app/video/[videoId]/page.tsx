@@ -1,4 +1,5 @@
 import { EditVideo } from "@/components/edit-video";
+import NoSSRWrapper from "@/components/NoSSRWrapper";
 
 export default async function Video({
   params,
@@ -11,7 +12,9 @@ export default async function Video({
     <div className="min-h-screen flex justify-center items-center">
       <div className="w-full flex items-center justify-center">
         <div className="w-[80%] my-24 " data-focus-container="true">
-          <EditVideo videoId={videoId} />
+          <NoSSRWrapper>
+            <EditVideo videoId={videoId} />
+          </NoSSRWrapper>
         </div>
       </div>
     </div>

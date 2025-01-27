@@ -2,29 +2,37 @@ import { ClapperboardIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAppSelector } from "@/lib/hooks";
 import { AppState } from "@/lib/features/videoSlice";
-import { join } from "path";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { RefObject, useRef } from "react";
-import { toBlobURL, fetchFile } from "@ffmpeg/util";
-import localFont from "@next/font/local";
+import { RefObject, useRef, useState } from "react";
+import { fetchFile } from "@ffmpeg/util";
+import { loadFFmpeg, loadFont } from "@/lib/utils";
 
 export function MakeVideo() {
   const { video, feature, timeline } = useAppSelector((state) => state);
 
   const ffmpegRef = useRef(new FFmpeg());
 
+  const [isPending, setIsPending] = useState(false);
+
   async function handleMakeVideo() {
+    setIsPending(true);
     await makeVideo(
       video.videoId,
       { ...video, ...feature, ...timeline },
       ffmpegRef
     );
+    setIsPending(false);
   }
 
   return (
-    <Button variant={"secondary"} className="mt-auto" onClick={handleMakeVideo}>
+    <Button
+      variant={"secondary"}
+      disabled={isPending}
+      className="mt-auto"
+      onClick={handleMakeVideo}
+    >
       <ClapperboardIcon />
-      Make Video
+      {isPending ? "Yükleniyor..." : "Make Video"}
     </Button>
   );
 }
@@ -34,45 +42,15 @@ export async function makeVideo(
   appState: AppState,
   ffmpegRef: RefObject<FFmpeg>
 ) {
-  const loadFFmpeg = async () => {
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
-    const ffmpeg = ffmpegRef.current;
-    ffmpeg.on("log", ({ message }) => {
-      console.log(message);
-    });
-    // toBlobURL is used to bypass CORS issue, urls with the same
-    // domain can be used directly.
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(
-        `${baseURL}/ffmpeg-core.wasm`,
-        "application/wasm"
-      ),
-    });
-  };
-
-  await loadFFmpeg();
+  await loadFFmpeg(ffmpegRef);
 
   const ffmpeg = ffmpegRef.current;
 
-  //   const myFont = localFont({
-  //     src: "./font.ttf",
-  //     variable: "--font-my-font",
-  //   });
-
-  const loadFont = async () => {
-    // const fontPath = myFont.src,
-
-    const fontResponse = await fetch("/fonts/font.ttf");
-    const fontData = await fontResponse.arrayBuffer();
-    await ffmpeg.writeFile("font.ttf", new Uint8Array(fontData));
-  };
-
-  await loadFont();
+  await loadFont(ffmpeg);
 
   const { texts, images } = appState;
 
-  const videoInputPath = "original.mp4";
+  const inputVideo = "original.mp4";
   const outputVideo = "edited_video.mp4";
 
   let currentLabel = "[0:v]";
@@ -116,37 +94,53 @@ export async function makeVideo(
     currentLabel = nextLabel;
   });
 
+  if (filters.length === 0) {
+    return;
+  }
+
   // Prepare FFmpeg command
   const filterComplex = filters.join(";");
 
   try {
     await ffmpeg.writeFile(
       "original.mp4",
-      await fetchFile(`blob:http://localhost:3000/${videoId}`)
+      await fetchFile(`blob:${process.env.NEXT_PUBLIC_URL}/${videoId}`)
     );
+
+    for await (const image of images) {
+      await ffmpeg.writeFile(
+        `${image.imageName}.jpg`,
+        await fetchFile(`blob:${process.env.NEXT_PUBLIC_URL}/${image.imageSrc}`)
+      );
+    }
 
     await ffmpeg.exec([
       "-i",
-      videoInputPath,
-      ...images.flatMap((image) => ["-i", image.imageName]),
+      inputVideo,
+      ...images.flatMap((image) => ["-i", `${image.imageName}.jpg`]),
       "-filter_complex",
       filterComplex,
       "-map",
       currentLabel,
+      "-map",
+      "0:a", // Maps the audio stream from the input video
+      "-c:v",
+      "libx264", // Specify the video codec
+      "-c:a",
+      "aac", // Specify the audio codec
       "-pix_fmt",
       "yuv420p",
       outputVideo,
     ]);
 
-    const data = await ffmpeg.readFile("edited_video.mp4");
+    const data = await ffmpeg.readFile(outputVideo);
 
     const url = URL.createObjectURL(new Blob([data], { type: "video/mp4" }));
     const link = document.createElement("a");
     link.href = url;
-    link.download = "edited_video.mp4";
+    link.download = outputVideo;
     link.click();
   } catch (error) {
     console.error("Error processing video:", error);
-    throw error;
   }
 }
