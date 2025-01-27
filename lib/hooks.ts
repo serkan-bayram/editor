@@ -4,8 +4,8 @@ import type { Image, Text } from "@/components/video";
 import {
   setFocus as setComponentFocus,
   updateComponent,
-} from "./features/video/videoSlice";
-import { DraggableData } from "react-rnd";
+} from "./features/featureSlice";
+import { DraggableData, Position } from "react-rnd";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
@@ -14,11 +14,12 @@ export const useAppStore = useStore.withTypes<AppStore>();
 
 export function useDraggable(focusedComponent: Text | Image) {
   const dispatch = useAppDispatch();
+
   const realDimensions = useAppSelector(
-    (state) => state.video.realVideoDimensions
+    (state) => state.video.videoDimensions.real
   );
   const clientDimensions = useAppSelector(
-    (state) => state.video.clientVideoDimensions
+    (state) => state.video.videoDimensions.client
   );
 
   function setFocus() {
@@ -42,12 +43,16 @@ export function useDraggable(focusedComponent: Text | Image) {
     );
   }
 
-  function setSize(ref: HTMLElement) {
+  function setSize(ref: HTMLElement, position: Position) {
     dispatch(
       updateComponent({
         ...focusedComponent,
         width: ref.clientWidth,
         height: ref.clientHeight,
+        x: position.x,
+        y: position.y,
+        realX: (realDimensions.width * position.x) / clientDimensions.width,
+        realY: (realDimensions.height * position.y) / clientDimensions.height,
         realWidth:
           (realDimensions.width * ref.clientWidth) / clientDimensions.width,
         realHeight:

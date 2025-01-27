@@ -3,14 +3,13 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { ClapperboardIcon, ImageIcon, TextCursorInputIcon } from "lucide-react";
 import { Button } from "./button";
 import { ChangeEvent, useRef } from "react";
-import { addComponent } from "@/lib/features/video/videoSlice";
+import { addComponent } from "@/lib/features/featureSlice";
 
 export function Features() {
   const dispatch = useAppDispatch();
 
-  const frameState = useAppSelector((state) => state.video);
-
-  const videoId = frameState.videoId;
+  const videoId = useAppSelector((state) => state.video.videoId);
+  const currentTime = useAppSelector((state) => state.video.currentTime);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,8 +32,8 @@ export function Features() {
         bgTransparent: false,
         fontSize: 20,
         secondsRange: {
-          start: 0,
-          end: 1,
+          start: currentTime,
+          end: currentTime + 10,
         },
       })
     );
@@ -69,15 +68,11 @@ export function Features() {
         realWidth: 200,
         realHeight: 40,
         secondsRange: {
-          start: 0,
-          end: 1,
+          start: currentTime,
+          end: currentTime + 10,
         },
       })
     );
-  }
-
-  async function handleMakeVideo() {
-    await makeVideo(videoId, frameState);
   }
 
   return (
@@ -104,14 +99,22 @@ export function Features() {
         Add Image
       </Button>
 
-      <Button
-        variant={"secondary"}
-        className="mt-auto"
-        onClick={handleMakeVideo}
-      >
-        <ClapperboardIcon />
-        Make Video
-      </Button>
+      <MakeVideo />
     </div>
+  );
+}
+
+function MakeVideo() {
+  const { video, feature, timeline } = useAppSelector((state) => state);
+
+  async function handleMakeVideo() {
+    await makeVideo(video.videoId, { ...video, ...feature, ...timeline });
+  }
+
+  return (
+    <Button variant={"secondary"} className="mt-auto" onClick={handleMakeVideo}>
+      <ClapperboardIcon />
+      Make Video
+    </Button>
   );
 }

@@ -2,9 +2,10 @@ import type { Text } from "./video";
 import { cn } from "@/lib/utils";
 import { useAppSelector, useDraggable } from "@/lib/hooks";
 import { Rnd } from "react-rnd";
+import { HandleComponent } from "./ui/handle-component";
 
 export function Texts() {
-  const texts = useAppSelector((state) => state.video.texts);
+  const texts = useAppSelector((state) => state.feature.texts);
   const currentTime = useAppSelector((state) => state.video.currentTime);
 
   const currentTexts = texts.filter(
@@ -19,9 +20,15 @@ export function Texts() {
 export function Text({ text }: { text: Text }) {
   const { setPosition, setFocus, setSize } = useDraggable(text);
 
+  const focusedComponent = useAppSelector(
+    (state) => state.feature.focusedComponent
+  );
+
   return (
     <Rnd
-      className={cn("px-2 z-50 text-center text-nowrap ")}
+      className={cn("px-2 z-50 text-center text-nowrap", {
+        "border-2 border-purple-400": focusedComponent?.id === text.id,
+      })}
       style={{
         fontSize: `${text.fontSize}px`,
         color: `${text.textColor}`,
@@ -35,9 +42,11 @@ export function Text({ text }: { text: Text }) {
       }}
       size={{ width: text.width, height: text.height }}
       bounds={"parent"}
-      onResizeStop={(_, __, ref) => setSize(ref)}
+      onResizeStart={() => setFocus()}
+      onResizeStop={(_, __, ref, ___, position) => setSize(ref, position)}
       onDragStop={(_, data) => setPosition(data)}
       onMouseDown={() => setFocus()}
+      resizeHandleComponent={{ bottomRight: <HandleComponent /> }}
     >
       <div className="h-full flex items-center justify-center">{text.text}</div>
     </Rnd>

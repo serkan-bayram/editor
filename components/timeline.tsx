@@ -1,140 +1,38 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  setCurrentTime,
-  setIsHoldingSlider,
-  setTimelineSliderPos,
-} from "@/lib/features/video/videoSlice";
-import { Rnd } from "react-rnd";
-import { TimelineElements } from "./timeline-elements";
+import { setThumbnailsContainerWidth } from "@/lib/features/timelineSlice";
+import { TimelineSlider } from "./timeline-slider";
+import { ThumbnailsContainer } from "./thumbnails-container";
+import { TIME_SKIP, TimeIndicators } from "./time-indicators";
 
-const THUMBNAIL_ITEM_WIDTH = 112;
+export const THUMBNAIL_ITEM_WIDTH = 112;
 
 export function Timeline() {
   const dispatch = useAppDispatch();
 
   const videoDuration = useAppSelector((state) => state.video.videoDuration);
-  const timelineSliderPos = useAppSelector(
-    (state) => state.video.timelineSliderPos
-  );
-  const currentTime = useAppSelector((state) => state.video.currentTime);
-  const isHoldingSlider = useAppSelector(
-    (state) => state.video.isHoldingSlider
-  );
 
-  const [thumbnailsContainerWidth, setThumbnailsContainerWidth] = useState(
-    8 * THUMBNAIL_ITEM_WIDTH
-  );
-
-  const thumbnailsContainerRef = useRef<HTMLDivElement>(null);
+  const thumbnailsCount = Math.ceil(videoDuration / TIME_SKIP);
 
   useEffect(() => {
-    if (isHoldingSlider) return;
-
     dispatch(
-      setTimelineSliderPos(
-        (thumbnailsContainerWidth / videoDuration) * currentTime
-      )
+      setThumbnailsContainerWidth(thumbnailsCount * THUMBNAIL_ITEM_WIDTH)
     );
-  }, [currentTime]);
+  }, [videoDuration]);
 
-  // useEffect(() => {
-  //   if (!thumbnailsContainerRef.current) return;
-
-  //   setThumbnailsContainerWidth(thumbnailsContainerRef.current.clientWidth);
-  // }, [thumbnailsContainerRef.current]);
+  // Kind of loading screen
+  if (videoDuration === 0)
+    return (
+      <div className="h-60 mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full "></div>
+    );
 
   return (
     <div className="h-60  mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full ">
-      <Rnd
-        className="z-20"
-        position={{ x: timelineSliderPos, y: 0 }}
-        onDrag={(_, data) => {
-          dispatch(setTimelineSliderPos(data.x));
+      <TimelineSlider />
 
-          dispatch(
-            setCurrentTime(videoDuration / (thumbnailsContainerWidth / data.x))
-          );
-        }}
-        onDragStart={() => {
-          dispatch(setIsHoldingSlider(true));
-        }}
-        onDragStop={() => {
-          dispatch(setIsHoldingSlider(false));
-        }}
-        dragAxis="x"
-        bounds={"parent"}
-        enableResizing={false}
-      >
-        <div className="flex flex-col items-center -translate-y-3">
-          <div className="w-5 aspect-square rounded-full bg-gray-400"></div>
-          <div className="w-1 h-64 bg-gray-400 -translate-y-2 rounded-lg"></div>
-        </div>
-      </Rnd>
+      <TimeIndicators />
 
-      <div
-        // ref={timeIndicatorsContainerRef}
-        style={{ width: `${thumbnailsContainerWidth}px` }}
-        className="relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
-      >
-        {Array.from({ length: videoDuration / 10 + 2 }).map((_, index) => {
-          return (
-            <div
-              key={index}
-              className="absolute h-4 w-2 text-white"
-              style={{
-                left: `${
-                  (thumbnailsContainerWidth / (videoDuration / 10)) * index
-                }px`,
-              }}
-            >
-              {index * 10}s
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="h-full overflow-y-auto flex gap-y-2 px-2 flex-col relative">
-        <div
-          ref={thumbnailsContainerRef}
-          className="absolute left-2 top-2 flex justify-start"
-        >
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-          <div
-            style={{ width: `${THUMBNAIL_ITEM_WIDTH}px` }}
-            className="aspect-video border"
-          ></div>
-        </div>
-
-        <TimelineElements thumbnailsContainerWidth={thumbnailsContainerWidth} />
-      </div>
+      <ThumbnailsContainer />
     </div>
   );
 }
