@@ -19,7 +19,7 @@ export function Timeline() {
     dispatch(
       setThumbnailsContainerWidth(THUMBNAILS_COUNT * THUMBNAIL_ITEM_WIDTH)
     );
-  }, [videoDuration]);
+  }, [dispatch, videoDuration]);
 
   // Kind of loading screen
   if (videoDuration === 0)

@@ -4,7 +4,6 @@ import { TimelineElement } from "./ui/timeline-element";
 export function TimelineElements() {
   const texts = useAppSelector((state) => state.feature.texts);
   const images = useAppSelector((state) => state.feature.images);
-  const videoId = useAppSelector((state) => state.video.videoId);
   const thumbnailsContainerWidth = useAppSelector(
     (state) => state.timeline.thumbnailsContainerWidth
   );
@@ -30,7 +29,7 @@ export function TimelineElements() {
                 <img
                   alt="Added Image"
                   className="pointer-events-none"
-                  src={`/api/frames/${videoId}/images/${image.imageName}`}
+                  src={`blob:${process.env.NEXT_PUBLIC_URL}/${image.imageSrc}`}
                 />
               </div>
               Image

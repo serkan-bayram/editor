@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -39,6 +39,7 @@ export interface Text extends VideoComponent {
 
 export interface Image extends VideoComponent {
   type: "image";
+  imageSrc: string;
   imageName: string;
 }
 
@@ -64,22 +65,25 @@ export function Video() {
     if (!isHoldingSlider) return;
 
     videoRef.current.currentTime = currentTime;
-  }, [videoRef.current, currentTime]);
+  }, [dispatch, videoRef.current, currentTime]);
 
-  const containerRef = useCallback((node: HTMLDivElement) => {
-    if (!node) return;
+  const containerRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (!node) return;
 
-    const resizeObserver = new ResizeObserver(() => {
-      dispatch(
-        setClientVideoDimensions({
-          width: node.clientWidth,
-          height: node.clientHeight,
-        })
-      );
-    });
+      const resizeObserver = new ResizeObserver(() => {
+        dispatch(
+          setClientVideoDimensions({
+            width: node.clientWidth,
+            height: node.clientHeight,
+          })
+        );
+      });
 
-    resizeObserver.observe(node);
-  }, []);
+      resizeObserver.observe(node);
+    },
+    [dispatch]
+  );
 
   return (
     <>
@@ -123,7 +127,7 @@ export function Video() {
             ref={videoRef}
             controls
             className="bg-black rounded-md w-fit h-full object-contain "
-            src={`/${videoId}/original.mp4`}
+            src={`blob:${process.env.NEXT_PUBLIC_URL}/${videoId}`}
           ></video>
         </div>
       </div>

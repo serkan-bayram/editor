@@ -19,7 +19,6 @@ export function Images() {
 }
 
 export function Image({ image }: { image: Image }) {
-  const videoId = useAppSelector((state) => state.video.videoId);
   const focusedComponent = useAppSelector(
     (state) => state.feature.focusedComponent
   );
@@ -47,7 +46,7 @@ export function Image({ image }: { image: Image }) {
         alt="Added Image"
         fill
         className="pointer-events-none"
-        src={`/api/frames/${videoId}/images/${image.imageName}`}
+        src={`blob:${process.env.NEXT_PUBLIC_URL}/${image.imageSrc}`}
       />
     </Rnd>
   );
