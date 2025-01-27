@@ -9,7 +9,7 @@ export function SideBar() {
   );
 
   return (
-    <div className="self-stretch md:w-[450px] bg-primary rounded-md p-2 ">
+    <div className="self-stretch md:w-[450px] max-h-[500px] bg-primary rounded-md p-2 ">
       {focusedComponent ? <EditComponent /> : <Features />}
     </div>
   );

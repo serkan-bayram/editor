@@ -3,20 +3,21 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setThumbnailsContainerWidth } from "@/lib/features/timelineSlice";
 import { TimelineSlider } from "./timeline-slider";
 import { ThumbnailsContainer } from "./thumbnails-container";
-import { TIME_SKIP, TimeIndicators } from "./time-indicators";
+import { TimeIndicators } from "./time-indicators";
 
 export const THUMBNAIL_ITEM_WIDTH = 112;
+export const THUMBNAILS_COUNT = 8;
 
 export function Timeline() {
   const dispatch = useAppDispatch();
 
   const videoDuration = useAppSelector((state) => state.video.videoDuration);
 
-  const thumbnailsCount = Math.ceil(videoDuration / TIME_SKIP);
-
+  // TODO: If thumbnails count and item width will stay same
+  // no point to dispatch it
   useEffect(() => {
     dispatch(
-      setThumbnailsContainerWidth(thumbnailsCount * THUMBNAIL_ITEM_WIDTH)
+      setThumbnailsContainerWidth(THUMBNAILS_COUNT * THUMBNAIL_ITEM_WIDTH)
     );
   }, [videoDuration]);
 
@@ -27,7 +28,7 @@ export function Timeline() {
     );
 
   return (
-    <div className="h-60  mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full ">
+    <div className="h-60 mt-6 relative flex justify-center flex-col bg-primary rounded-md w-full ">
       <TimelineSlider />
 
       <TimeIndicators />

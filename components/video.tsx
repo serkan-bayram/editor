@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { RefObject, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Text, Texts } from "./text";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
+  setClientVideoDimensions,
   setCurrentTime,
   setRealVideoDimensions,
   setVideoDuration,
@@ -45,7 +46,7 @@ export function Video() {
   const videoId = useAppSelector((state) => state.video.videoId);
   const videoDuration = useAppSelector((state) => state.video.videoDuration);
   const currentTime = useAppSelector((state) => state.video.currentTime);
-  const { client } = useAppSelector((state) => state.video.videoDimensions);
+  const client = useAppSelector((state) => state.video.videoDimensions.client);
 
   const isHoldingSlider = useAppSelector(
     (state) => state.timeline.isHoldingSlider
@@ -65,15 +66,30 @@ export function Video() {
     videoRef.current.currentTime = currentTime;
   }, [videoRef.current, currentTime]);
 
+  const containerRef = useCallback((node: HTMLDivElement) => {
+    if (!node) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      dispatch(
+        setClientVideoDimensions({
+          width: node.clientWidth,
+          height: node.clientHeight,
+        })
+      );
+    });
+
+    resizeObserver.observe(node);
+  }, []);
+
   return (
     <>
       <div className="flex relative w-full flex-col items-center">
         <div
+          ref={containerRef}
           style={{
-            width: client.width,
             height: client.height,
           }}
-          className="relative overflow-hidden flex items-center justify-center"
+          className="relative w-fit overflow-hidden flex items-center justify-center"
         >
           <div className="w-full h-full absolute">
             <Texts />
@@ -106,7 +122,7 @@ export function Video() {
             }}
             ref={videoRef}
             controls
-            className="bg-black rounded-md w-full h-full object-cover "
+            className="bg-black rounded-md w-fit h-full object-contain "
             src={`/${videoId}/original.mp4`}
           ></video>
         </div>

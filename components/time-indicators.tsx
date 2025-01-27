@@ -1,6 +1,5 @@
 import { useAppSelector } from "@/lib/hooks";
-
-export const TIME_SKIP = 10;
+import { THUMBNAILS_COUNT } from "./timeline";
 
 export function TimeIndicators() {
   const thumbnailsContainerWidth = useAppSelector(
@@ -9,15 +8,13 @@ export function TimeIndicators() {
 
   const videoDuration = useAppSelector((state) => state.video.videoDuration);
 
-  const thumbnailsCount = Math.ceil(videoDuration / TIME_SKIP);
-
   return (
     <div
       style={{ width: `${thumbnailsContainerWidth}px` }}
-      className="cursor-pointer relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
+      className="relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
     >
-      {Array.from({ length: thumbnailsCount }).map((_, index) => {
-        const leftPos = (thumbnailsContainerWidth / thumbnailsCount) * index;
+      {Array.from({ length: THUMBNAILS_COUNT + 1 }).map((_, index) => {
+        const leftPos = (thumbnailsContainerWidth / THUMBNAILS_COUNT) * index;
 
         return (
           <div
@@ -27,7 +24,7 @@ export function TimeIndicators() {
               left: `${leftPos}px`,
             }}
           >
-            {index * 10}s
+            {index * Math.ceil(videoDuration / THUMBNAILS_COUNT)}s
           </div>
         );
       })}
