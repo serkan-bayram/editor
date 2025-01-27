@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   setCurrentTime,
   setIsHoldingSlider,
+  setThumbnailsContainerWidth,
   setTimelineSliderPos,
 } from "@/lib/features/video/videoSlice";
 import { Rnd } from "react-rnd";
 import { TimelineElements } from "./timeline-elements";
+import { calculateCurrentTimeViaSliderPos } from "@/lib/utils";
 
 const THUMBNAIL_ITEM_WIDTH = 112;
 
@@ -22,11 +24,27 @@ export function Timeline() {
     (state) => state.video.isHoldingSlider
   );
 
-  const [thumbnailsContainerWidth, setThumbnailsContainerWidth] = useState(
+  const [thumbnailsContainerWidth, _] = useState<number>(
     8 * THUMBNAIL_ITEM_WIDTH
   );
 
   const thumbnailsContainerRef = useRef<HTMLDivElement>(null);
+
+  // TODO: This is mostly done but I need to tidy the up codebase a bit to make it work
+  function handleTimelineIndicatorsClick(
+    e: React.MouseEvent<HTMLDivElement | React.MouseEvent>
+  ) {
+    // const target = e.currentTarget as HTMLDivElement;
+    // const xPos = e.clientX - target.getBoundingClientRect().left;
+    // dispatch(setIsHoldingSlider(true));
+    // dispatch(setCurrentTime(videoDuration / (thumbnailsContainerWidth / xPos)));
+    // dispatch(setTimelineSliderPos(xPos));
+    // dispatch(setIsHoldingSlider(false));
+  }
+
+  useEffect(() => {
+    dispatch(setThumbnailsContainerWidth(thumbnailsContainerWidth));
+  }, [thumbnailsContainerWidth]);
 
   useEffect(() => {
     if (isHoldingSlider) return;
@@ -36,7 +54,7 @@ export function Timeline() {
         (thumbnailsContainerWidth / videoDuration) * currentTime
       )
     );
-  }, [currentTime]);
+  }, [currentTime, isHoldingSlider]);
 
   // useEffect(() => {
   //   if (!thumbnailsContainerRef.current) return;
@@ -53,7 +71,13 @@ export function Timeline() {
           dispatch(setTimelineSliderPos(data.x));
 
           dispatch(
-            setCurrentTime(videoDuration / (thumbnailsContainerWidth / data.x))
+            setCurrentTime(
+              calculateCurrentTimeViaSliderPos(
+                thumbnailsContainerWidth,
+                videoDuration,
+                data.x
+              )
+            )
           );
         }}
         onDragStart={() => {
@@ -73,19 +97,21 @@ export function Timeline() {
       </Rnd>
 
       <div
+        onClick={(e) => handleTimelineIndicatorsClick(e)}
         // ref={timeIndicatorsContainerRef}
         style={{ width: `${thumbnailsContainerWidth}px` }}
-        className="relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
+        className="cursor-pointer relative select-none opacity-50 z-10 top-0 left-2 h-8   w-full"
       >
         {Array.from({ length: videoDuration / 10 + 2 }).map((_, index) => {
+          const leftPos =
+            (thumbnailsContainerWidth / (videoDuration / 10)) * index;
+
           return (
             <div
               key={index}
-              className="absolute h-4 w-2 text-white"
+              className="absolute h-full w-full   text-white"
               style={{
-                left: `${
-                  (thumbnailsContainerWidth / (videoDuration / 10)) * index
-                }px`,
+                left: `${leftPos}px`,
               }}
             >
               {index * 10}s

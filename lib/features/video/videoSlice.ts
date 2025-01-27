@@ -14,6 +14,7 @@ export interface VideoState {
   timelineSliderPos: number;
   videoDuration: number;
   isHoldingSlider: boolean;
+  thumbnailsContainerWidth: number;
 }
 
 export type FocusedComponent = {
@@ -36,6 +37,7 @@ const initialState: VideoState = {
   images: [],
   timelineSliderPos: 0,
   isHoldingSlider: false,
+  thumbnailsContainerWidth: 1,
 };
 
 export const videoSlice = createSlice({
@@ -126,6 +128,9 @@ export const videoSlice = createSlice({
     ) => {
       state.clientVideoDimensions = action.payload;
     },
+    setThumbnailsContainerWidth: (state, action: PayloadAction<number>) => {
+      state.thumbnailsContainerWidth = action.payload;
+    },
   },
 });
 
@@ -141,6 +146,7 @@ export const {
   setIsHoldingSlider,
   setRealVideoDimensions,
   setClientVideoDimensions,
+  setThumbnailsContainerWidth,
 } = videoSlice.actions;
 
 export default videoSlice.reducer;

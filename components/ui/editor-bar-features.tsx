@@ -33,8 +33,8 @@ export function Features() {
         bgTransparent: false,
         fontSize: 20,
         secondsRange: {
-          start: 0,
-          end: 1,
+          start: frameState.currentTime,
+          end: frameState.currentTime + 1,
         },
       })
     );
@@ -69,8 +69,8 @@ export function Features() {
         realWidth: 200,
         realHeight: 40,
         secondsRange: {
-          start: 0,
-          end: 1,
+          start: frameState.currentTime,
+          end: frameState.currentTime + 1,
         },
       })
     );
