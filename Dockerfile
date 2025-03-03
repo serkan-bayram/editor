@@ -11,6 +11,8 @@ RUN npm ci
 # Proje dosyalarını kopyalayalım
 COPY . .
 
+ENV NEXT_PUBLIC_URL="https://editor.serkanbayram.dev"
+
 # Next.js uygulamasını build edelim
 RUN npm run build
 
